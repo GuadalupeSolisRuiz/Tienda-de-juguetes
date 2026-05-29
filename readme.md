@@ -1,4 +1,4 @@
-# 🧸 ToyWorld — Tienda de Juguetes Online
+# 🧸 Tienda de Juguetes Online
 
 ![Estado del proyecto](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
@@ -27,7 +27,7 @@
 
 ## 📖 Descripción
 
-**ToyWorld** es una aplicación web de comercio electrónico especializada en juguetes para todas las edades. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
+**Tienda de Juguetes** es una aplicación web de comercio electrónico especializada en juguetes para todas las edades. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
 
 ---
 
@@ -48,14 +48,11 @@
 
 | Capa | Tecnología |
 |------|------------|
-| Frontend | React 18 + Vite |
-| Estilos | Tailwind CSS |
-| Backend | Node.js + Express |
-| Base de datos | PostgreSQL + Prisma ORM |
-| Autenticación | JWT + bcrypt |
-| Almacenamiento | Cloudinary (imágenes) |
-| Pagos | Stripe API |
-| Testing | Jest + React Testing Library |
+| Frontend | HTML 5, Javascript |
+| Estilos | Bootstrap, CSS3 |
+| Backend | XAMPP, PHP 8 |
+| Base de datos | PhpMyAdmin |
+| Almacenamiento | Local |
 
 ---
 
