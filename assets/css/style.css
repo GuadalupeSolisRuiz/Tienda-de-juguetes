@@ -1706,3 +1706,15 @@ input[type="date"].filled {
   margin-bottom: 4px;
 }
 
+/* Modal avatar */
+.modal-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C4B5FD, #7C3AED);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+

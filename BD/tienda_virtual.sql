@@ -208,7 +208,7 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(55) NOT NULL,
   `apellido` varchar(55) NOT NULL,
   `correo` varchar(255) NOT NULL,
-  `contraseña` varchar(10) NOT NULL,
+  `contraseña` varchar(255) NOT NULL,
   `telefono` varchar(70) NOT NULL,
   `fecha_registro` date NOT NULL,
   `id_rol` int(11) NOT NULL

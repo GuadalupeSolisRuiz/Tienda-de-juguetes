@@ -2,7 +2,7 @@
 $servidor = "localhost";
 $usuario = "root";
 $pass = "";
-$bd = "tienda";
+$bd = "tienda_virtual";
 $alerta = "";
 
 $conexion = new mysqli($servidor, $usuario, $pass, $bd);

@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tienda de Juguetes - Registro</title>
-  <?php include "include/conect.php"; ?>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap"
@@ -63,7 +62,7 @@
     <!-- RIGHT -->
     <div class="hero-right">
       <div class="form-card">
-        <form id="registrationForm" novalidate>
+        <form id="registrar" novalidate>
 
           <!-- Header -->
           <div class="d-flex align-items-center gap-3 mb-4">
@@ -84,8 +83,8 @@
               <label class="form-label">Nombre completo <span class="required-star">*</span></label>
               <div class="input-icon-wrap">
                 <i class="bi bi-person field-icon"></i>
-                <input type="text" id="nombreCompleto" class="form-control" placeholder="Ingresa tu nombre completo"
-                  required />
+                <input type="text" id="nombreCompleto" name="nombre" class="form-control"
+                  placeholder="Ingresa tu nombre completo" required />
                 <div class="invalid-feedback">
                   Por favor ingresa tu nombre completo.
                 </div>
@@ -95,7 +94,8 @@
               <label class="form-label">Apellido completo <span class="required-star">*</span></label>
               <div class="input-icon-wrap">
                 <i class="bi bi-person field-icon"></i>
-                <input type="text" class="form-control" placeholder="Ingresa tu apellido completo" required />
+                <input type="text" name="apellido" class="form-control" placeholder="Ingresa tu apellido completo"
+                  required />
                 <div class="invalid-feedback">
                   Por favor ingresa tu apellido completo.
                 </div>
@@ -108,7 +108,8 @@
             <label class="form-label">Correo electrónico <span class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-envelope field-icon"></i>
-              <input type="email" class="form-control" placeholder="ejemplo@correo.com" required />
+              <input type="email" id="correoReg" name="correo" class="form-control" placeholder="ejemplo@correo.com"
+                required />
               <div class="invalid-feedback">
                 Por favor ingresa un correo electrónico válido.
               </div>
@@ -121,8 +122,8 @@
               <label class="form-label">Contraseña <span class="required-star">*</span></label>
               <div class="input-icon-wrap">
                 <i class="bi bi-lock field-icon"></i>
-                <input type="password" id="pw1" class="form-control has-toggle" placeholder="Crea una contraseña"
-                  required />
+                <input type="password" id="pw1" name="contrasena" class="form-control has-toggle"
+                  placeholder="Crea una contraseña" required />
                 <button class="toggle-pw" type="button" onclick="togglePw('pw1', this)">
                   <i class="bi bi-eye"></i>
                 </button>
@@ -136,8 +137,8 @@
               <label class="form-label">Confirmar contraseña <span class="required-star">*</span></label>
               <div class="input-icon-wrap">
                 <i class="bi bi-lock field-icon"></i>
-                <input type="password" id="pw2" class="form-control has-toggle" placeholder="Repite tu contraseña"
-                  required />
+                <input type="password" id="pw2" name="contrasena2" class="form-control has-toggle"
+                  placeholder="Repite tu contraseña" required />
                 <button class="toggle-pw" type="button" onclick="togglePw('pw2', this)">
                   <i class="bi bi-eye"></i>
                 </button>
@@ -145,6 +146,15 @@
                   Por favor confirma tu contraseña.
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-telephone field-icon"></i>
+              <input type="tel" name="telefono" class="form-control" placeholder="ej. 5512345678" maxlength="70" />
             </div>
           </div>
 
@@ -182,14 +192,15 @@
           </div>
 
           <!-- Submit -->
-          <button type="submit" class="btn-register">
+          <button type="submit" name="registrar" class="btn-register">
             <i class="bi bi-person-plus-fill" style="font-size:1.15rem;"></i>
             Crear cuenta
           </button>
         </form>
 
         <!-- Login link -->
-        <p class="login-link">¿Ya tienes una cuenta? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Inicia sesión</a></p>
+        <p class="login-link">¿Ya tienes una cuenta? <a href="#" data-bs-toggle="modal"
+            data-bs-target="#loginModal">Inicia sesión</a></p>
       </div>
     </div>
   </section>
@@ -255,6 +266,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // ── Mostrar/ocultar contraseña ──
     function togglePw(id, btn) {
       const input = document.getElementById(id);
       const icon = btn.querySelector('i');
@@ -267,17 +279,80 @@
       }
     }
 
+    // ── Envío del formulario con fetch (POST → JSON) ──
     document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('registrationForm');
+      const form = document.getElementById('registrar');
       if (!form) return;
 
-      form.addEventListener('submit', function (event) {
+      // Crear contenedor de alerta si no existe
+      let alertBox = document.getElementById('regAlert');
+      if (!alertBox) {
+        alertBox = document.createElement('div');
+        alertBox.id = 'regAlert';
+        alertBox.style.display = 'none';
+        alertBox.className = 'alert mb-3';
+        form.parentNode.insertBefore(alertBox, form);
+      }
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Validación nativa del navegador
         if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
+          form.classList.add('was-validated');
+          return;
         }
         form.classList.add('was-validated');
+
+        // Verificar que las contraseñas coincidan en cliente
+        const pw1 = document.getElementById('pw1').value;
+        const pw2 = document.getElementById('pw2').value;
+        if (pw1 !== pw2) {
+          showAlert('Las contraseñas no coinciden.', 'danger');
+          return;
+        }
+
+        // Deshabilitar botón durante la petición
+        const submitBtn = form.querySelector('[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creando cuenta...';
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch('include/registro_process.php', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showAlert('🎉 ' + data.message, 'success');
+            form.reset();
+            form.classList.remove('was-validated');
+            // Redirigir al inicio luego de 2.5 segundos
+            setTimeout(() => { window.location.href = 'index.php'; }, 2500);
+          } else {
+            showAlert('⚠️ ' + data.message, 'danger');
+          }
+        } catch (err) {
+          showAlert('Error de conexión. Intenta nuevamente.', 'danger');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="bi bi-person-plus-fill" style="font-size:1.15rem;"></i> Crear cuenta';
+        }
       });
+
+      function showAlert(message, type) {
+        alertBox.className = 'alert alert-' + type + ' mb-3';
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Ocultar automáticamente los errores después de 5s
+        if (type === 'danger') {
+          setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
+      }
     });
   </script>
 </body>
