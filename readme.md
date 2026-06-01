@@ -108,69 +108,12 @@ npx prisma db seed
 
 ---
 
-## ▶️ Uso
-
-**Modo desarrollo** — levanta el backend y el frontend simultáneamente:
-
-```bash
-# En la raíz del proyecto
-npm run dev
-```
-
-O por separado:
-
-```bash
-# Backend (puerto 3001)
-cd server && npm run dev
-
-# Frontend (puerto 5173)
-cd client && npm run dev
-```
-
-Abre tu navegador en `http://localhost:5173`
-
 **Credenciales de prueba:**
 
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Admin | admin@toyworld.com | Admin1234! |
 | Cliente | cliente@ejemplo.com | Cliente1234! |
-
----
-
-## 📁 Estructura del proyecto
-
-```
-toyworld/
-├── client/                  # Aplicación React (frontend)
-│   ├── public/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/      # Componentes reutilizables
-│   │   ├── pages/           # Vistas principales
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── context/         # Estado global (Context API)
-│   │   ├── services/        # Llamadas a la API
-│   │   └── utils/
-│   └── package.json
-│
-├── server/                  # API REST (backend)
-│   ├── src/
-│   │   ├── controllers/     # Lógica de controladores
-│   │   ├── routes/          # Definición de rutas
-│   │   ├── middleware/      # Middlewares (auth, validación)
-│   │   ├── models/          # Modelos Prisma
-│   │   └── utils/
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── seed.js
-│   └── package.json
-│
-├── .env.example
-├── .gitignore
-├── README.md
-└── package.json             # Scripts raíz (concurrently)
-```
 
 ---
 
@@ -255,4 +198,4 @@ Este proyecto está bajo la licencia **MIT**. Consulta el archivo [`LICENSE`](./
 
 ---
 
-<p align="center">Hecho con ❤️ y mucha imaginación 🎠</p>
+<p align="center">Hecho con ❤️</p>
