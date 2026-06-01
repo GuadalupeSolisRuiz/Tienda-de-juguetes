@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -189,7 +189,7 @@
         </form>
 
         <!-- Login link -->
-        <p class="login-link">¿Ya tienes una cuenta? <a href="#">Inicia sesión</a></p>
+        <p class="login-link">¿Ya tienes una cuenta? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Inicia sesión</a></p>
       </div>
     </div>
   </section>
