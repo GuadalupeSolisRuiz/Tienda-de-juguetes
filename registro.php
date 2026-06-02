@@ -187,7 +187,7 @@
           <div class="form-check d-flex align-items-center gap-2 mb-4 mt-2">
             <input class="form-check-input" type="checkbox" id="terms" />
             <label class="form-check-label" for="terms">
-              Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
+              Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a>.
             </label>
           </div>
 
@@ -262,6 +262,108 @@
   </div>
 
 
+  <!-- ── MODAL: Términos y Condiciones ── -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 16px; overflow: hidden; border: none;">
+ 
+        <!-- Header -->
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #7237b5, #7237b5);">
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center justify-content-center rounded-circle"
+              style="width:42px; height:42px; background:rgba(255,255,255,0.25);">
+              <i class="bi bi-file-earmark-text fs-5"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fw-bold mb-0" id="termsModalLabel">Términos y Condiciones</h5>
+              <small style="opacity:0.85;">Tienda Virtual · Versión vigente</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+ 
+        <!-- Body -->
+        <div class="modal-body px-4 py-3">
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-1-circle-fill me-2"></i>Uso de la plataforma
+            </h6>
+            <p class="text-muted small">La tienda virtual tiene como finalidad permitir la consulta y compra de productos tecnológicos mediante una plataforma web. El usuario se compromete a utilizar el sistema de manera responsable y únicamente para las funciones permitidas dentro de la plataforma.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-2-circle-fill me-2"></i>Registro de usuarios
+            </h6>
+            <p class="text-muted small">Para realizar compras dentro del sistema será necesario crear una cuenta proporcionando información válida y actualizada. El usuario será responsable de mantener la confidencialidad de su contraseña y de la actividad realizada desde su cuenta.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-3-circle-fill me-2"></i>Productos y disponibilidad
+            </h6>
+            <p class="text-muted small">Los productos mostrados dentro de la tienda estarán sujetos a disponibilidad. La información relacionada con precios, imágenes y descripciones podrá actualizarse en cualquier momento dentro del sistema.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-4-circle-fill me-2"></i>Compras y pagos
+            </h6>
+            <p class="text-muted small">Las compras realizadas dentro de la plataforma deberán ser confirmadas mediante el proceso de pago correspondiente. El sistema registrará la información relacionada con pedidos, pagos y estado de compra para mantener el control de las operaciones.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-5-circle-fill me-2"></i>Seguridad de la información
+            </h6>
+            <p class="text-muted small">El sistema implementará medidas de seguridad para proteger la información de los usuarios, incluyendo validación de datos y protección de credenciales. Los datos almacenados serán utilizados únicamente para el funcionamiento de la tienda virtual.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-6-circle-fill me-2"></i>Restricciones de uso
+            </h6>
+            <p class="text-muted small">Queda prohibido el uso indebido de la plataforma, incluyendo intentos de acceso no autorizado, alteración de información o actividades que afecten el funcionamiento del sistema.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-4">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-7-circle-fill me-2"></i>Modificaciones del sistema
+            </h6>
+            <p class="text-muted small">La administración podrá realizar actualizaciones, modificaciones o mantenimiento de la plataforma cuando sea necesario.</p>
+          </div>
+          <hr>
+ 
+          <div class="mb-2">
+            <h6 class="fw-bold" style="color:#7237b5;">
+              <i class="bi bi-8-circle-fill me-2"></i>Aceptación de términos
+            </h6>
+            <p class="text-muted small">Al utilizar la tienda virtual, el usuario acepta los presentes términos y condiciones de uso del sistema.</p>
+          </div>
+ 
+        </div>
+ 
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-sm text-white fw-bold" id="btnAceptarTerms"
+            data-bs-dismiss="modal"
+            style="background:#7237b5; border:none;">
+            <i class="bi bi-check2-circle me-1"></i>Acepto los términos
+          </button>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+ 
   <!-- Bootstrap 5 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 
@@ -353,6 +455,11 @@
           setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
         }
       }
+    });
+
+    // ── Al aceptar términos desde el modal, marcar el checkbox automáticamente ──
+    document.getElementById('btnAceptarTerms').addEventListener('click', function () {
+      document.getElementById('terms').checked = true;
     });
   </script>
 </body>
