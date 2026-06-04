@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -409,6 +410,16 @@
         // Verificar que las contraseñas coincidan en cliente
         const pw1 = document.getElementById('pw1').value;
         const pw2 = document.getElementById('pw2').value;
+        if (pw1.length < 8) {
+          showAlert('La contraseña debe tener al menos 8 caracteres.', 'danger');
+          return;
+        }
+        const hasLetter = /[A-Za-z]/.test(pw1);
+        const hasNumber = /[0-9]/.test(pw1);
+        if (!hasLetter || !hasNumber) {
+          showAlert('La contraseña debe contener tanto letras como números.', 'danger');
+          return;
+        }
         if (pw1 !== pw2) {
           showAlert('Las contraseñas no coinciden.', 'danger');
           return;

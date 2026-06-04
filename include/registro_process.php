@@ -38,6 +38,11 @@ if (strlen($contrasena) < 8) {
     exit;
 }
 
+if (!preg_match('/[A-Za-z]/', $contrasena) || !preg_match('/[0-9]/', $contrasena)) {
+    echo json_encode(['success' => false, 'message' => 'La contraseña debe contener tanto letras como números.']);
+    exit;
+}
+
 // ── Hashear la contraseña de forma segura ──
 $contrasenaHash = password_hash($contrasena, PASSWORD_BCRYPT);
 

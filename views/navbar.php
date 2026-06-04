@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!-- ── NAVBAR ── -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
   <div class="container-fluid px-4">
@@ -44,7 +49,40 @@
       <!-- Icons -->
       <div class="d-flex align-items-center gap-3 ms-lg-3 mt-2 mt-lg-0">
         <button class="nav-icon-btn" id="btn-search"><i class="bi bi-search"></i></button>
-        <button class="nav-icon-btn" id="btn-user" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-person"></i></button>
+        
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+          <!-- Logged in user dropdown -->
+          <div class="dropdown">
+            <button class="nav-icon-btn dropdown-toggle d-flex align-items-center gap-2" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border: none; background: transparent; padding: 0.25rem 0.75rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.08); color: #7C3AED; transition: all 0.2s ease;">
+              <i class="bi bi-person-fill fs-5"></i>
+              <span class="d-none d-md-inline fw-semibold" style="font-size: 0.9rem;">
+                <?php 
+                  if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
+                      echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre']);
+                  } else {
+                      echo htmlspecialchars($_SESSION['usuario_nombre']) . " (" . htmlspecialchars($_SESSION['usuario_rol']) . ")";
+                  }
+                ?>
+              </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 200px; background-color: #fff; z-index: 1050;">
+              <li class="px-3 py-2 border-bottom mb-2">
+                <p class="mb-0 fw-bold text-dark text-capitalize" style="font-size: 0.9rem;"><?php echo htmlspecialchars($_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido']); ?></p>
+                <p class="mb-0 text-muted small text-truncate" style="font-size: 0.75rem;"><?php echo htmlspecialchars($_SESSION['usuario_correo']); ?></p>
+                <span class="badge mt-1 text-capitalize" style="font-size: 0.65rem; background-color: var(--purple); color: #fff;"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></span>
+              </li>
+              <li>
+                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2 text-danger fw-semibold" href="include/logout.php" style="font-size: 0.9rem;">
+                  <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                </a>
+              </li>
+            </ul>
+          </div>
+        <?php else: ?>
+          <!-- Logged out state -->
+          <button class="nav-icon-btn" id="btn-user" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-person"></i></button>
+        <?php endif; ?>
+        
         <button class="nav-icon-btn cart-wrapper" id="btn-cart">
           <i class="bi bi-cart2"></i>
           <span class="cart-count">0</span>
@@ -74,13 +112,15 @@
       <!-- Body Form -->
       <div class="modal-body px-4 py-3">
         <form id="modalLoginForm" novalidate>
+          <!-- Alerta de inicio de sesión -->
+          <div id="loginAlert" class="alert alert-danger mb-3" style="display: none; font-size: 0.85rem; border-radius: 8px;"></div>
           
           <!-- Email -->
           <div class="mb-3">
             <label for="modalLoginEmail" class="form-label">Correo electrónico <span class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-envelope field-icon"></i>
-              <input type="email" id="modalLoginEmail" class="form-control" placeholder="ejemplo@correo.com" required />
+              <input type="email" id="modalLoginEmail" name="correo" class="form-control" placeholder="ejemplo@correo.com" required />
               <div class="invalid-feedback">
                 Por favor ingresa un correo electrónico válido.
               </div>
@@ -92,7 +132,7 @@
             <label for="modalLoginPassword" class="form-label">Contraseña <span class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-lock field-icon"></i>
-              <input type="password" id="modalLoginPassword" class="form-control has-toggle" placeholder="Ingresa tu contraseña" required />
+              <input type="password" id="modalLoginPassword" name="contrasena" class="form-control has-toggle" placeholder="Ingresa tu contraseña" required />
               <button class="toggle-pw" type="button" onclick="toggleModalPw('modalLoginPassword', this)">
                 <i class="bi bi-eye"></i>
               </button>
@@ -141,17 +181,76 @@
     }
   }
 
-  // Validación de formulario del modal
+  // Validación y envío asíncrono del formulario del modal
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('modalLoginForm');
     if (!form) return;
 
-    form.addEventListener('submit', function (event) {
+    const alertBox = document.getElementById('loginAlert');
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      
+      // Ocultar alerta previa
+      if (alertBox) {
+        alertBox.style.display = 'none';
+        alertBox.textContent = '';
+      }
+
       if (!form.checkValidity()) {
-        event.preventDefault();
         event.stopPropagation();
+        form.classList.add('was-validated');
+        return;
       }
       form.classList.add('was-validated');
+
+      // Deshabilitar botón durante el procesamiento
+      const submitBtn = form.querySelector('[type="submit"]');
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Iniciando sesión...';
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch('include/login_process.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en el servidor');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+          if (alertBox) {
+            alertBox.className = 'alert alert-success mb-3';
+            alertBox.textContent = '🎉 ' + data.message;
+            alertBox.style.display = 'block';
+          }
+          // Redirigir al inicio o recargar la página actual para reflejar la sesión
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          if (alertBox) {
+            alertBox.className = 'alert alert-danger mb-3';
+            alertBox.textContent = '⚠️ ' + data.message;
+            alertBox.style.display = 'block';
+          }
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      } catch (err) {
+        if (alertBox) {
+          alertBox.className = 'alert alert-danger mb-3';
+          alertBox.textContent = '⚠️ Error de conexión con el servidor. Intenta de nuevo.';
+          alertBox.style.display = 'block';
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+      }
     });
   });
 </script>
