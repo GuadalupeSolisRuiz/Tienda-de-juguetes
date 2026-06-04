@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 }
 ?>
 <!-- ── NAVBAR ── -->
@@ -49,30 +49,39 @@ if (session_status() === PHP_SESSION_NONE) {
       <!-- Icons -->
       <div class="d-flex align-items-center gap-3 ms-lg-3 mt-2 mt-lg-0">
         <button class="nav-icon-btn" id="btn-search"><i class="bi bi-search"></i></button>
-        
+
         <?php if (isset($_SESSION['usuario_id'])): ?>
           <!-- Logged in user dropdown -->
           <div class="dropdown">
-            <button class="nav-icon-btn dropdown-toggle d-flex align-items-center gap-2" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border: none; background: transparent; padding: 0.25rem 0.75rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.08); color: #7C3AED; transition: all 0.2s ease;">
+            <button class="nav-icon-btn dropdown-toggle d-flex align-items-center gap-2" id="userDropdown"
+              data-bs-toggle="dropdown" aria-expanded="false"
+              style="border: none; background: transparent; padding: 0.25rem 0.75rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.08); color: #7C3AED; transition: all 0.2s ease;">
               <i class="bi bi-person-fill fs-5"></i>
               <span class="d-none d-md-inline fw-semibold" style="font-size: 0.9rem;">
-                <?php 
-                  if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
-                      echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre']);
-                  } else {
-                      echo htmlspecialchars($_SESSION['usuario_nombre']) . " (" . htmlspecialchars($_SESSION['usuario_rol']) . ")";
-                  }
+                <?php
+                if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
+                  echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre']);
+                } else {
+                  echo htmlspecialchars($_SESSION['usuario_nombre']) . " (" . htmlspecialchars($_SESSION['usuario_rol']) . ")";
+                }
                 ?>
               </span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" aria-labelledby="userDropdown" style="border-radius: 12px; min-width: 200px; background-color: #fff; z-index: 1050;">
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" aria-labelledby="userDropdown"
+              style="border-radius: 12px; min-width: 200px; background-color: #fff; z-index: 1050;">
               <li class="px-3 py-2 border-bottom mb-2">
-                <p class="mb-0 fw-bold text-dark text-capitalize" style="font-size: 0.9rem;"><?php echo htmlspecialchars($_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido']); ?></p>
-                <p class="mb-0 text-muted small text-truncate" style="font-size: 0.75rem;"><?php echo htmlspecialchars($_SESSION['usuario_correo']); ?></p>
-                <span class="badge mt-1 text-capitalize" style="font-size: 0.65rem; background-color: var(--purple); color: #fff;"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></span>
+                <p class="mb-0 fw-bold text-dark text-capitalize" style="font-size: 0.9rem;">
+                  <?php echo htmlspecialchars($_SESSION['usuario_nombre'] . ' ' . $_SESSION['usuario_apellido']); ?>
+                </p>
+                <p class="mb-0 text-muted small text-truncate" style="font-size: 0.75rem;">
+                  <?php echo htmlspecialchars($_SESSION['usuario_correo']); ?>
+                </p>
+                <span class="badge mt-1 text-capitalize"
+                  style="font-size: 0.65rem; background-color: var(--purple); color: #fff;"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></span>
               </li>
               <li>
-                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2 text-danger fw-semibold" href="include/logout.php" style="font-size: 0.9rem;">
+                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2 text-danger fw-semibold"
+                  href="include/logout.php" style="font-size: 0.9rem;">
                   <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
               </li>
@@ -80,9 +89,10 @@ if (session_status() === PHP_SESSION_NONE) {
           </div>
         <?php else: ?>
           <!-- Logged out state -->
-          <button class="nav-icon-btn" id="btn-user" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-person"></i></button>
+          <button class="nav-icon-btn" id="btn-user" data-bs-toggle="modal" data-bs-target="#loginModal"><i
+              class="bi bi-person"></i></button>
         <?php endif; ?>
-        
+
         <button class="nav-icon-btn cart-wrapper" id="btn-cart">
           <i class="bi bi-cart2"></i>
           <span class="cart-count">0</span>
@@ -97,11 +107,12 @@ if (session_status() === PHP_SESSION_NONE) {
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0">
-      
+
       <!-- Header -->
       <div class="modal-header border-0 pb-0 d-flex flex-column align-items-center text-center position-relative pt-4">
-        <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        
+        <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"
+          aria-label="Cerrar"></button>
+
         <div class="modal-avatar mb-3">
           <i class="bi bi-person-fill text-white fs-2"></i>
         </div>
@@ -113,14 +124,17 @@ if (session_status() === PHP_SESSION_NONE) {
       <div class="modal-body px-4 py-3">
         <form id="modalLoginForm" novalidate>
           <!-- Alerta de inicio de sesión -->
-          <div id="loginAlert" class="alert alert-danger mb-3" style="display: none; font-size: 0.85rem; border-radius: 8px;"></div>
-          
+          <div id="loginAlert" class="alert alert-danger mb-3"
+            style="display: none; font-size: 0.85rem; border-radius: 8px;"></div>
+
           <!-- Email -->
           <div class="mb-3">
-            <label for="modalLoginEmail" class="form-label">Correo electrónico <span class="required-star">*</span></label>
+            <label for="modalLoginEmail" class="form-label">Correo electrónico <span
+                class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-envelope field-icon"></i>
-              <input type="email" id="modalLoginEmail" name="correo" class="form-control" placeholder="ejemplo@correo.com" required />
+              <input type="email" id="modalLoginEmail" name="correo" class="form-control"
+                placeholder="ejemplo@correo.com" required />
               <div class="invalid-feedback">
                 Por favor ingresa un correo electrónico válido.
               </div>
@@ -132,7 +146,8 @@ if (session_status() === PHP_SESSION_NONE) {
             <label for="modalLoginPassword" class="form-label">Contraseña <span class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-lock field-icon"></i>
-              <input type="password" id="modalLoginPassword" name="contrasena" class="form-control has-toggle" placeholder="Ingresa tu contraseña" required />
+              <input type="password" id="modalLoginPassword" name="contrasena" class="form-control has-toggle"
+                placeholder="Ingresa tu contraseña" required />
               <button class="toggle-pw" type="button" onclick="toggleModalPw('modalLoginPassword', this)">
                 <i class="bi bi-eye"></i>
               </button>
@@ -157,7 +172,9 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
 
         <!-- Register Redirect Link -->
-        <a href="registro.php" class="btn-secondary-custom w-100 d-flex align-items-center justify-content-center gap-2 py-3" id="btn-modal-register" style="border-radius: 12px; font-weight: 700; text-decoration: none;">
+        <a href="registro.php"
+          class="btn-secondary-custom w-100 d-flex align-items-center justify-content-center gap-2 py-3"
+          id="btn-modal-register" style="border-radius: 12px; font-weight: 700; text-decoration: none;">
           <i class="bi bi-person-plus-fill"></i>
           Registrarse / Crear Cuenta
         </a>
@@ -190,7 +207,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
-      
+
       // Ocultar alerta previa
       if (alertBox) {
         alertBox.style.display = 'none';
@@ -255,3 +272,125 @@ if (session_status() === PHP_SESSION_NONE) {
   });
 </script>
 
+<?php if (isset($_SESSION['usuario_id'])): ?>
+  <!-- ── MODAL DE INACTIVIDAD ── -->
+  <div class="modal fade" id="inactivityModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="inactivityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; background-color: #fff;">
+        <div class="modal-header border-0 pb-0 d-flex flex-column align-items-center text-center pt-4">
+          <div class="modal-avatar mb-3"
+            style="background-color: var(--yellow); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);">
+            ⏳
+          </div>
+          <h4 class="modal-title font-fredoka fw-bold text-dark mb-1" id="inactivityModalLabel">¿Sigues ahí?</h4>
+          <p class="text-muted small mb-0 px-3">Tu sesión está a punto de expirar debido a la inactividad.</p>
+        </div>
+        <div class="modal-body text-center px-4 py-3">
+          <div class="mb-3">
+            <p class="fw-semibold text-secondary mb-1" style="font-size: 0.95rem;">Cerrando sesión en:</p>
+            <span id="inactivityCountdown" class="display-6 fw-bold text-danger font-fredoka">10</span>
+            <span class="text-danger fw-bold fs-5">segundos</span>
+          </div>
+          <!-- Progress bar countdown -->
+          <div class="progress mb-2" style="height: 6px; border-radius: 3px; background-color: #F3F4F6;">
+            <div id="inactivityProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger"
+              role="progressbar" style="width: 100%; transition: width 10s linear;"></div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex gap-2 justify-content-center">
+          <button type="button" class="btn btn-outline-secondary px-3 py-2 fw-semibold"
+            style="border-radius: 12px; font-size: 0.9rem;" onclick="logoutNow()">Cerrar sesión</button>
+          <button type="button" class="btn text-white px-4 py-2 fw-bold"
+            style="border-radius: 12px; background-color: var(--purple); border: none; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);"
+            onclick="keepSessionAlive()">Sí, seguir jugando 🧸</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let inactivityTimer;
+    let countdownTimer;
+    let secondsRemaining = 10;
+    const inactivityLimit = 10 * 1000;
+    let inactivityModal;
+
+    function resetInactivityTimer() {
+      // Si el modal está visible, no reiniciamos el temporizador principal
+      const modalEl = document.getElementById('inactivityModal');
+      if (modalEl && modalEl.classList.contains('show')) {
+        return;
+      }
+
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(showInactivityWarning, inactivityLimit);
+    }
+
+    function showInactivityWarning() {
+      if (!inactivityModal) {
+        inactivityModal = new bootstrap.Modal(document.getElementById('inactivityModal'));
+      }
+
+      // Resetear contador y barra de progreso
+      secondsRemaining = 10;
+      document.getElementById('inactivityCountdown').textContent = secondsRemaining;
+      const progressBar = document.getElementById('inactivityProgressBar');
+      progressBar.style.transition = 'none';
+      progressBar.style.width = '100%';
+
+      // Forzar reflow para aplicar la transición de Bootstrap
+      progressBar.offsetHeight;
+      progressBar.style.transition = 'width 10s linear';
+      progressBar.style.width = '0%';
+
+      inactivityModal.show();
+
+      clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        secondsRemaining--;
+        document.getElementById('inactivityCountdown').textContent = secondsRemaining;
+
+        if (secondsRemaining <= 0) {
+          clearInterval(countdownTimer);
+          logoutNow();
+        }
+      }, 1000);
+    }
+
+    function keepSessionAlive() {
+      clearInterval(countdownTimer);
+      if (inactivityModal) {
+        inactivityModal.hide();
+      }
+
+      // Refrescar sesión en el servidor
+      fetch('include/keep_alive.php')
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            logoutNow();
+          }
+        })
+        .catch(err => {
+          console.error("Error al refrescar la sesión", err);
+        });
+
+      resetInactivityTimer();
+    }
+
+    function logoutNow() {
+      window.location.href = 'include/logout.php';
+    }
+
+    // Agregar oyentes para detectar actividad del usuario
+    document.addEventListener('DOMContentLoaded', function () {
+      resetInactivityTimer();
+
+      const activityEvents = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
+      activityEvents.forEach(event => {
+        document.addEventListener(event, resetInactivityTimer, true);
+      });
+    });
+  </script>
+<?php endif; ?>
