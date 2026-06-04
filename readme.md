@@ -19,7 +19,6 @@
 - 🔍 **Catálogo con búsqueda y filtros** — por categoría, rango de precios y edad recomendada
 - 🛒 **Carrito de compras** — con persistencia de sesión
 - 👤 **Autenticación de usuarios** — registro, inicio de sesión y perfil
-- 💳 **Pasarela de pagos** — integración con Stripe / PayPal
 - 📦 **Seguimiento de pedidos** — historial y estado en tiempo real
 - 🛠️ **Panel de administración** — gestión de productos, categorías y órdenes
 - 📱 **Diseño responsivo** — compatible con dispositivos móviles y escritorio
