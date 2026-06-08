@@ -656,84 +656,8 @@
 
   <!-- Bootstrap 5 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    // ── Smooth scroll for anchor links ──
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-
-    // ── Wishlist toggle ──
-    document.querySelectorAll('.product-wishlist').forEach(btn => {
-      btn.addEventListener('click', function () {
-        const icon = this.querySelector('i');
-        if (icon.classList.contains('bi-heart')) {
-          icon.classList.replace('bi-heart', 'bi-heart-fill');
-          this.style.color = '#EF4444';
-        } else {
-          icon.classList.replace('bi-heart-fill', 'bi-heart');
-          this.style.color = '';
-        }
-      });
-    });
-
-    // ── Add to cart animation ──
-    const cartCount = document.querySelector('.cart-count');
-    let count = 0;
-    document.querySelectorAll('.btn-add-cart').forEach(btn => {
-      btn.addEventListener('click', function () {
-        count++;
-        cartCount.textContent = count;
-        // Quick pulse animation
-        this.style.transform = 'scale(1.3)';
-        setTimeout(() => { this.style.transform = ''; }, 200);
-      });
-    });
-
-    // ── Newsletter form ──
-    const newsletterForm = document.getElementById('newsletterForm');
-    if (newsletterForm) {
-      newsletterForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const emailInput = document.getElementById('newsletter-email');
-        if (emailInput.value) {
-          const btn = this.querySelector('button');
-          btn.textContent = '¡Suscrito! ✓';
-          btn.style.background = '#10B981';
-          emailInput.value = '';
-          setTimeout(() => {
-            btn.textContent = 'Suscribirme';
-            btn.style.background = '';
-          }, 3000);
-        }
-      });
-    }
-
-    // ── Scroll reveal animation ──
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.category-card, .product-card, .why-card').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-      observer.observe(el);
-    });
-  </script>
+  <!-- General App Scripts -->
+  <script src="assets/js/script.js"></script>
 </body>
 
 </html>
