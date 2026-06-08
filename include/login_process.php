@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-include "conect.php";
+include __DIR__ . "/conect.php";
 
 // Solo aceptar POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

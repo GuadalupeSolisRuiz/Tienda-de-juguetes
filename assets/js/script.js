@@ -98,7 +98,12 @@ function keepSessionAlive() {
 
   // Refrescar sesión en el servidor
   fetch('include/keep_alive.php')
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
     .then(data => {
       if (!data.success) {
         logoutNow();
@@ -180,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
-  });
+  }
 
   // 5. Animación de revelado al hacer scroll (Scroll Reveal)
   const categoryCards = document.querySelectorAll('.category-card, .product-card, .why-card');

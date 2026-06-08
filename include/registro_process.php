@@ -1,7 +1,12 @@
 <?php
 // ── Proceso de Registro de Usuario ──
 header('Content-Type: application/json; charset=utf-8');
-include "conect.php";
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include __DIR__ . "/conect.php";
 
 // Solo aceptar POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
