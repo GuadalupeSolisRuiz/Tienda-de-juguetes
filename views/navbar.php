@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 ?>
 <!-- ── NAVBAR ── -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
-  <div class="container-fluid px-4">
+  <div class="container-fluid px-4" style="background-color: #ffffff;" data-bs-theme="primary" >
 
     <!-- Logo -->
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.php" id="logo">
@@ -27,7 +27,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <li class="nav-item"><a class="nav-link" href="index.php" id="nav-inicio">Inicio</a></li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="nav-juguetes">Juguetes</a>
-          <ul class="dropdown-menu shadow-sm border-0">
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
             <li><a class="dropdown-item" href="#" id="nav-ninas">Niñas</a></li>
             <li><a class="dropdown-item" href="#" id="nav-ninos">Niños</a></li>
             <li><a class="dropdown-item" href="#" id="nav-bebes">Bebés</a></li>
@@ -35,7 +35,7 @@ if (session_status() === PHP_SESSION_NONE) {
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="nav-categorias">Categorías</a>
-          <ul class="dropdown-menu shadow-sm border-0">
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
             <li><a class="dropdown-item" href="#" id="nav-educativos">Educativos</a></li>
             <li><a class="dropdown-item" href="#" id="nav-electronicos">Electrónicos</a></li>
             <li><a class="dropdown-item" href="#" id="nav-peluches">Peluches</a></li>
@@ -47,7 +47,7 @@ if (session_status() === PHP_SESSION_NONE) {
       </ul>
 
       <!-- Icons -->
-      <div class="d-flex align-items-center gap-3 ms-lg-3 mt-2 mt-lg-0">
+      <div class="d-flex align-items-center gap-3 ms-lg-3 mt-2 mb-2 mt-lg-0">
         <button class="nav-icon-btn" id="btn-search"><i class="bi bi-search"></i></button>
 
         <?php if (isset($_SESSION['usuario_id'])): ?>

@@ -43,6 +43,26 @@ body {
   font-family: 'Nunito', sans-serif;
 }
 
+/* Estilos para el botón toggler: fondo, borde redondeado y sombra */
+.navbar-toggler-bg {
+  background-color: rgba(243, 23, 23, 0.95);
+  padding: 6px 10px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.navbar-toggler-bg:active,
+.navbar-toggler-bg:focus {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  outline: none;
+}
+
+/* Ajuste: icono del toggler más visible sobre el fondo */
+.navbar-toggler-bg .navbar-toggler-icon {
+  filter: invert(20%);
+}
+
 .logo-icon {
   font-size: 2rem;
 }
@@ -380,6 +400,133 @@ body {
   }
   50% {
     opacity: 0.4;
+  }
+}
+
+/* Estilos para fondo del menú colapsado en dispositivos pequeños */
+@media (max-width: 991.98px) {
+  nav.navbar {
+    position: relative;
+  }
+
+  /* Panel colapsado desde la derecha con fondo blanco */
+  #mainNav {
+    position: fixed !important;
+    top: 64px !important;
+    right: 0 !important;
+    left: auto !important;
+    width: min(360px, 100%) !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: calc(100vh - 64px) !important;
+    background-color: #ffffff !important;
+    border-radius: 0 0 0 18px !important;
+    box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.15) !important;
+    padding: 1.5rem 1rem !important;
+    z-index: 1055 !important;
+    overflow-y: auto !important;
+  }
+
+  #mainNav.collapse:not(.show) {
+    display: none !important;
+  }
+
+  #mainNav .navbar-nav {
+    width: 100%;
+    flex-direction: column !important;
+    gap: 0.5rem;
+  }
+
+  #mainNav .nav-item {
+    width: 100%;
+  }
+
+  #mainNav .nav-link {
+    color: #111827 !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  #mainNav .dropdown {
+    position: relative;
+    width: 100%;
+  }
+
+  /* Fondo blanco y posición correcta para submenús */
+  #mainNav .dropdown-menu {
+    position: static !important;
+    display: none !important;
+    width: 100% !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    margin-top: 0.5rem !important;
+    margin-left: 1rem !important;
+    padding: 0.5rem 0 !important;
+    z-index: 1065 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  #mainNav .dropdown.show > .dropdown-menu {
+    display: block !important;
+  }
+
+  #mainNav .dropdown-menu.dropdown-menu-end {
+    right: auto !important;
+    left: 0 !important;
+  }
+
+  #mainNav .dropdown-item {
+    color: #111827 !important;
+    background-color: transparent !important;
+    padding: 0.5rem 1.5rem !important;
+  }
+
+  /* Icons en el collapse */
+  #mainNav > .d-flex {
+    width: 100% !important;
+    flex-direction: column !important;
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+/* FIX Desktop */
+@media (min-width: 992px) {
+  #mainNav {
+    position: relative !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    top: auto !important;
+    right: auto !important;
+  }
+
+  #mainNav.collapse {
+    display: flex !important;
+  }
+
+  #mainNav .navbar-nav {
+    flex-direction: row !important;
+  }
+
+  #mainNav .dropdown-menu {
+    position: absolute !important;
+    display: none !important;
+    width: auto !important;
+    min-width: 12rem !important;
+  }
+
+  #mainNav .dropdown.show > .dropdown-menu {
+    display: block !important;
   }
 }
 
