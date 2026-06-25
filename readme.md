@@ -17,9 +17,9 @@
 ## 🧸 Vistas
 
 <p align="center">
-        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123522.png" />
-        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123541.png" />
-        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123559.png" />
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123522.png" />
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123541.png" />
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123559.png" />
 </p>
 
 ---
