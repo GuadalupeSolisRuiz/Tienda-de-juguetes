@@ -10,7 +10,7 @@
 
 ## 📖 Descripción
 
-**Tienda de Juguetes** es una aplicación web de comercio electrónico especializada en juguetes para todas las edades. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
+**Tienda de Juguetes** es una aplicación web de comercio electrónico especializada en juguetes para niños menores de 10 años. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
 
 ---
 
