@@ -8,6 +8,52 @@
 
 ---
 
+## Instalación paso a paso
+
+### 1. Instalar XAMPP
+Descarga e instala la última versión de XAMPP desde el siguiente enlace:
+
+🔗 https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.0.30/xampp-windows-x64-8.0.30-0-VS16-installer.exe/download
+
+### 2. Iniciar los servicios
+Abre el panel de control de XAMPP y activa los servicios:
+
+- Apache
+- MySQL
+
+### 3. Clonar o descargar el proyecto
+Obtén el código fuente desde el repositorio de GitHub:
+
+```bash
+git clone https://github.com/GuadalupeSolisRuiz/Tienda-de-juguetes.git
+```
+
+O descárgalo como archivo ZIP y extráelo.
+
+### 4. Copiar la carpeta al directorio de XAMPP
+Coloca la carpeta del proyecto dentro del directorio:
+
+```text
+C:\xampp\htdocs\
+```
+
+La estructura deberá quedar similar a:
+
+```text
+C:\xampp\htdocs\Tienda-de-juguetes
+```
+
+### 5. Ejecutar la aplicación
+Con Apache y MySQL en ejecución, abre tu navegador y accede a:
+
+```text
+http://localhost/Tienda-de-juguetes
+```
+
+Si la instalación se realizó correctamente, la página se mostrará funcionando en tu entorno local.
+
+---
+
 ## 📖 Descripción
 
 **Tienda de Juguetes** es una aplicación web de comercio electrónico especializada en juguetes para niños menores de 10 años. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
