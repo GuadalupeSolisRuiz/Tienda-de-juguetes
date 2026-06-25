@@ -1,4 +1,4 @@
-# 🧸 Tienda de Juguetes Online
+# 🧸 Nova Toys
 
 ![Estado del proyecto](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
@@ -7,8 +7,20 @@
 > Plataforma de e-commerce para la venta de juguetes, con catálogo interactivo, carrito de compras y panel de administración.
 
 ---
-### Vistas
 
+## 📖 Descripción
+
+**Nova Toys** es una aplicación web de comercio electrónico especializada en juguetes para niños menores de 10 años. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
+
+---
+
+## 🧸 Vistas
+
+<p align="center">
+        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123522.png" />
+        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123541.png" />
+        <img height="200px" src="assets/img/Captura de pantalla 2026-06-25 123559.png" />
+</p>
 
 ---
 
@@ -55,12 +67,6 @@ http://localhost/Tienda-de-juguetes
 ```
 
 Si la instalación se realizó correctamente, la página se mostrará funcionando en tu entorno local.
-
----
-
-## 📖 Descripción
-
-**Tienda de Juguetes** es una aplicación web de comercio electrónico especializada en juguetes para niños menores de 10 años. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
 
 ---
 
