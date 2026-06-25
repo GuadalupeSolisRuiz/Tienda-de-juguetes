@@ -7,6 +7,10 @@
 > Plataforma de e-commerce para la venta de juguetes, con catálogo interactivo, carrito de compras y panel de administración.
 
 ---
+### Vistas
+
+
+---
 
 ## Instalación paso a paso
 
