@@ -58,13 +58,17 @@ if (session_status() === PHP_SESSION_NONE) {
               style="border: none; background: transparent; padding: 0.25rem 0.75rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.08); color: #7C3AED; transition: all 0.2s ease;">
               <i class="bi bi-person-fill fs-5"></i>
               <span class="d-none d-md-inline fw-semibold" style="font-size: 0.9rem;">
-                <?php
-                if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
-                  echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre']);
-                } else {
-                  echo htmlspecialchars($_SESSION['usuario_nombre']) . " (" . htmlspecialchars($_SESSION['usuario_rol']) . ")";
-                }
-                ?>
+                <a href="#" class="text-decoration-none text-dark"
+                  onclick="event.preventDefault(); event.stopPropagation(); const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('profileModal')); modal.show();"
+                  style="color: inherit;">
+                  <?php
+                  if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
+                    echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre']);
+                  } else {
+                    echo htmlspecialchars($_SESSION['usuario_nombre']) . " (" . htmlspecialchars($_SESSION['usuario_rol']) . ")";
+                  }
+                  ?>
+                </a>
               </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" aria-labelledby="userDropdown"
@@ -78,6 +82,14 @@ if (session_status() === PHP_SESSION_NONE) {
                 </p>
                 <span class="badge mt-1 text-capitalize"
                   style="font-size: 0.65rem; background-color: var(--purple); color: #fff;"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></span>
+              </li>
+              <li>
+                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" href="#"
+                  data-bs-toggle="modal" data-bs-target="#profileModal"
+                  onclick="event.preventDefault(); event.stopPropagation(); const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('profileModal')); modal.show();"
+                  style="font-size: 0.9rem;">
+                  <i class="bi bi-person-gear"></i> Editar perfil
+                </a>
               </li>
               <li>
                 <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2 text-danger fw-semibold"
@@ -186,6 +198,64 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
 <?php if (isset($_SESSION['usuario_id'])): ?>
+  <!-- ── MODAL DE PERFIL ── -->
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; background-color: #fff;">
+        <div class="modal-header border-0 pb-0 d-flex flex-column align-items-center text-center pt-4">
+          <div class="modal-avatar mb-3"
+            style="background-color: var(--purple); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);">
+            <i class="bi bi-person-gear text-white"></i>
+          </div>
+          <h4 class="modal-title font-fredoka fw-bold text-dark mb-1" id="profileModalLabel">Editar perfil</h4>
+          <p class="text-muted small mb-0 px-3">Actualiza tus datos de registro desde aquí.</p>
+        </div>
+        <div class="modal-body px-4 py-3">
+          <div id="profileAlert" class="alert alert-danger mb-3" style="display: none; font-size: 0.9rem; border-radius: 8px;"></div>
+          <form id="profileForm" novalidate>
+            <input type="hidden" name="id_usuario" value="<?php echo intval($_SESSION['usuario_id']); ?>">
+
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label class="form-label">Nombre <span class="required-star">*</span></label>
+                <input type="text" name="nombre" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['nombre'] ?? ''); ?>" required>
+              </div>
+              <div class="col-12 col-sm-6">
+                <label class="form-label">Apellido <span class="required-star">*</span></label>
+                <input type="text" name="apellido" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['apellido'] ?? ''); ?>" required>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Correo electrónico <span class="required-star">*</span></label>
+              <input type="email" name="correo" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['correo'] ?? ''); ?>" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" name="telefono" class="form-control" value="<?php echo htmlspecialchars($usuario_actual['telefono'] ?? ''); ?>" maxlength="70">
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label class="form-label">Nueva contraseña <small class="text-muted">(opcional)</small></label>
+                <input type="password" id="profilePassword" name="contrasena" class="form-control has-toggle" placeholder="Deja vacío para mantenerla">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label class="form-label">Confirmar contraseña</label>
+                <input type="password" id="profilePasswordConfirm" name="contrasena2" class="form-control has-toggle" placeholder="Repite la nueva contraseña">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-register w-100 mt-2">
+              <i class="bi bi-save me-2"></i> Guardar cambios
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── MODAL DE INACTIVIDAD ── -->
   <div class="modal fade" id="inactivityModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="inactivityModalLabel" aria-hidden="true">
@@ -222,3 +292,79 @@ if (session_status() === PHP_SESSION_NONE) {
     </div>
   </div>
 <?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const profileForm = document.getElementById('profileForm');
+  if (!profileForm) return;
+
+  const alertBox = document.getElementById('profileAlert');
+
+  profileForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    if (alertBox) {
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+      alertBox.className = 'alert mb-3';
+    }
+
+    if (!profileForm.checkValidity()) {
+      profileForm.classList.add('was-validated');
+      return;
+    }
+
+    const password = document.getElementById('profilePassword')?.value || '';
+    const passwordConfirm = document.getElementById('profilePasswordConfirm')?.value || '';
+
+    if (password || passwordConfirm) {
+      if (password.length < 8 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+        showAlert('La contraseña debe tener al menos 8 caracteres y contener letras y números.', 'danger');
+        return;
+      }
+      if (password !== passwordConfirm) {
+        showAlert('Las contraseñas no coinciden.', 'danger');
+        return;
+      }
+    }
+
+    const submitBtn = profileForm.querySelector('[type="submit"]');
+    const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+    }
+
+    try {
+      const formData = new FormData(profileForm);
+      const response = await fetch('include/update_profile.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showAlert('✅ ' + data.message, 'success');
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        showAlert('⚠️ ' + data.message, 'danger');
+      }
+    } catch (error) {
+      showAlert('⚠️ Error de conexión con el servidor.', 'danger');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+      }
+    }
+  });
+
+  function showAlert(message, type) {
+    if (!alertBox) return;
+    alertBox.className = 'alert alert-' + type + ' mb-3';
+    alertBox.textContent = message;
+    alertBox.style.display = 'block';
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+});
+</script>

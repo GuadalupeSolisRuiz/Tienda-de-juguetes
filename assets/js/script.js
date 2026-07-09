@@ -32,90 +32,7 @@ function toggleModalPw(id, btn) {
 }
 
 // ── CONTROL DE INACTIVIDAD DE SESIÓN ──
-let inactivityTimer;
-let countdownTimer;
-let secondsRemaining = 10;
-const inactivityLimit = 10 * 1000;
-let inactivityModal;
-
-function resetInactivityTimer() {
-  // Si el modal está visible, no reiniciamos el temporizador principal
-  const modalEl = document.getElementById('inactivityModal');
-  if (modalEl && modalEl.classList.contains('show')) {
-    return;
-  }
-
-  clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(showInactivityWarning, inactivityLimit);
-}
-
-function showInactivityWarning() {
-  const modalEl = document.getElementById('inactivityModal');
-  if (!modalEl) return;
-
-  if (!inactivityModal) {
-    inactivityModal = new bootstrap.Modal(modalEl);
-  }
-
-  // Resetear contador y barra de progreso
-  secondsRemaining = 10;
-  const countdownEl = document.getElementById('inactivityCountdown');
-  if (countdownEl) {
-    countdownEl.textContent = secondsRemaining;
-  }
-  const progressBar = document.getElementById('inactivityProgressBar');
-  if (progressBar) {
-    progressBar.style.transition = 'none';
-    progressBar.style.width = '100%';
-
-    // Forzar reflow para aplicar la transición de Bootstrap
-    progressBar.offsetHeight;
-    progressBar.style.transition = 'width 10s linear';
-    progressBar.style.width = '0%';
-  }
-
-  inactivityModal.show();
-
-  clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    secondsRemaining--;
-    if (countdownEl) {
-      countdownEl.textContent = secondsRemaining;
-    }
-
-    if (secondsRemaining <= 0) {
-      clearInterval(countdownTimer);
-      logoutNow();
-    }
-  }, 1000);
-}
-
-function keepSessionAlive() {
-  clearInterval(countdownTimer);
-  if (inactivityModal) {
-    inactivityModal.hide();
-  }
-
-  // Refrescar sesión en el servidor
-  fetch('include/keep_alive.php')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (!data.success) {
-        logoutNow();
-      }
-    })
-    .catch(err => {
-      console.error("Error al refrescar la sesión", err);
-    });
-
-  resetInactivityTimer();
-}
-
+// Se dejó sin modal para evitar que aparezca de forma invasiva.
 function logoutNow() {
   window.location.href = 'include/logout.php';
 }
@@ -377,14 +294,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 9. Inicialización de control de inactividad de sesión
-  if (document.getElementById('inactivityModal')) {
-    resetInactivityTimer();
-
-    const activityEvents = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart'];
-    activityEvents.forEach(event => {
-      document.addEventListener(event, resetInactivityTimer, true);
-    });
-  }
 
 });
