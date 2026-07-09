@@ -4,9 +4,11 @@ $usuario = "root";
 $pass = "";
 $bd = "tienda_virtual";
 $alerta = "";
+$conexion_error = null;
 
 $conexion = new mysqli($servidor, $usuario, $pass, $bd);
 if ($conexion->connect_error) {
-    die("Error al conectar la base de datos" . $conexion->connect_error);
+    $conexion_error = $conexion->connect_error;
+    $conexion = null;
 }
 ?>

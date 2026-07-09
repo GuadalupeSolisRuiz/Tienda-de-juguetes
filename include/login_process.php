@@ -50,6 +50,22 @@ if (!$usuario) {
 
 // Verificar la contraseña hash con bcrypt
 if (password_verify($contrasena, $usuario['contraseña'])) {
+    $mensaje = 'Inicio de sesión exitoso. ¡Bienvenido!';
+    $rolClienteId = 1;
+    $rolInactivo = 'inactivo';
+
+    if (strtolower($usuario['nombre_rol']) === $rolInactivo) {
+        $reactivarStmt = $conexion->prepare('UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?');
+        $reactivarStmt->bind_param('ii', $rolClienteId, $usuario['id_usuario']);
+        $reactivarStmt->execute();
+        $reactivarStmt->close();
+
+        $usuario['id_rol'] = $rolClienteId;
+        $usuario['nombre_rol'] = 'cliente';
+        $mensaje = 'Bienvenido de vuelta. Tu cuenta ha sido reactivada como cliente.';
+        $_SESSION['mostrar_bienvenida_reactivacion'] = true;
+    }
+
     // Guardar información en la sesión
     $_SESSION['usuario_id'] = $usuario['id_usuario'];
     $_SESSION['usuario_nombre'] = $usuario['nombre'];
@@ -57,7 +73,7 @@ if (password_verify($contrasena, $usuario['contraseña'])) {
     $_SESSION['usuario_correo'] = $usuario['correo'];
     $_SESSION['usuario_rol'] = $usuario['nombre_rol'];
 
-    echo json_encode(['success' => true, 'message' => 'Inicio de sesión exitoso. ¡Bienvenido!']);
+    echo json_encode(['success' => true, 'message' => $mensaje]);
 } else {
     echo json_encode(['success' => false, 'message' => 'El correo electrónico o la contraseña son incorrectos.']);
 }

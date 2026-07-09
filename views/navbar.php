@@ -2,6 +2,26 @@
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
+
+$usuario_actual = null;
+$mostrarBienvenidaReactivacion = false;
+if (isset($_SESSION['usuario_id'])) {
+  include __DIR__ . '/../include/conect.php';
+
+  $stmt = $conexion->prepare('SELECT nombre, apellido, correo, telefono FROM usuarios WHERE id_usuario = ?');
+  $stmt->bind_param('i', $_SESSION['usuario_id']);
+  $stmt->execute();
+  $resultado = $stmt->get_result();
+  $usuario_actual = $resultado->fetch_assoc();
+  $stmt->close();
+  $conexion->close();
+}
+
+$isIndexPage = basename($_SERVER['PHP_SELF']) === 'index.php';
+if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SESSION['mostrar_bienvenida_reactivacion']) {
+  $mostrarBienvenidaReactivacion = true;
+  unset($_SESSION['mostrar_bienvenida_reactivacion']);
+}
 ?>
 <!-- ── NAVBAR ── -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
@@ -44,6 +64,9 @@ if (session_status() === PHP_SESSION_NONE) {
         <li class="nav-item"><a class="nav-link" href="#" id="nav-ofertas">Ofertas</a></li>
         <li class="nav-item"><a class="nav-link" href="#" id="nav-nosotros">Nosotros</a></li>
         <li class="nav-item"><a class="nav-link" href="#" id="nav-contacto">Contacto</a></li>
+        <?php if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_rol']) && strtolower($_SESSION['usuario_rol']) === 'administrador'): ?>
+          <li class="nav-item"><a class="nav-link" href="gestion.php" id="nav-gestion">Gestión</a></li>
+        <?php endif; ?>
       </ul>
 
       <!-- Icons -->
@@ -105,6 +128,14 @@ if (session_status() === PHP_SESSION_NONE) {
               class="bi bi-person"></i></button>
         <?php endif; ?>
 
+        <?php if (isset($_SESSION['usuario_id'])): ?>
+          <a class="nav-link d-flex align-items-center gap-2 text-danger fw-semibold" href="include/logout.php"
+            style="font-size: 0.9rem; padding: 0.4rem 0.7rem; border-radius: 999px; background-color: rgba(220, 53, 69, 0.08);">
+            <i class="bi bi-box-arrow-right"></i>
+            <span class="d-none d-lg-inline">Cerrar sesión</span>
+          </a>
+        <?php endif; ?>
+
         <button class="nav-icon-btn cart-wrapper" id="btn-cart">
           <i class="bi bi-cart2"></i>
           <span class="cart-count">0</span>
@@ -114,6 +145,20 @@ if (session_status() === PHP_SESSION_NONE) {
 
   </div>
 </nav>
+
+<?php if ($mostrarBienvenidaReactivacion): ?>
+<div class="modal fade" id="welcomeBackModal" tabindex="-1" aria-labelledby="welcomeBackModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);">
+      <div class="modal-body text-center px-4 py-5">
+        <div class="mb-3" style="font-size: 4rem;">🐻</div>
+        <h3 class="fw-bold mb-2" id="welcomeBackModalLabel" style="font-family: 'Fredoka One', cursive; color: #7C3AED;">¡Te extrañamos!</h3>
+        <p class="mb-0 text-muted" style="font-size: 1.05rem;">Es bueno verte de vuelta.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 
 <!-- ── MODAL INICIAR SESIÓN / REGISTRO ── -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -173,6 +218,42 @@ if (session_status() === PHP_SESSION_NONE) {
           <button type="submit" class="btn-register w-100 mt-2 mb-3">
             <i class="bi bi-box-arrow-in-right fs-5 me-2"></i>
             Iniciar sesión
+          </button>
+        </form>
+
+        <div class="text-center mb-3">
+          <button type="button" class="btn btn-link p-0 text-decoration-none" id="forgotPasswordLink">
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+
+        <div id="forgotPasswordAlert" class="alert mb-3" style="display: none; font-size: 0.85rem; border-radius: 8px;"></div>
+
+        <form id="forgotPasswordForm" style="display: none;" novalidate>
+          <div class="mb-3">
+            <label for="forgotEmail" class="form-label">Correo electrónico <span class="required-star">*</span></label>
+            <input type="email" id="forgotEmail" name="correo" class="form-control" placeholder="ejemplo@correo.com" required />
+          </div>
+          <button type="submit" class="btn btn-outline-primary w-100 mb-3">
+            <i class="bi bi-send me-2"></i>Enviar código
+          </button>
+        </form>
+
+        <form id="resetPasswordForm" style="display: none;" novalidate>
+          <div class="mb-3">
+            <label for="resetCode" class="form-label">Código de verificación <span class="required-star">*</span></label>
+            <input type="text" id="resetCode" name="codigo" class="form-control" placeholder="123456" maxlength="6" required />
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nueva contraseña <span class="required-star">*</span></label>
+            <input type="password" id="newPassword" name="nueva_contrasena" class="form-control" placeholder="Mínimo 8 caracteres" required />
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar contraseña <span class="required-star">*</span></label>
+            <input type="password" id="confirmPassword" name="confirmar_contrasena" class="form-control" placeholder="Repite la contraseña" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-shield-lock me-2"></i>Actualizar contraseña
           </button>
         </form>
 
@@ -251,6 +332,46 @@ if (session_status() === PHP_SESSION_NONE) {
               <i class="bi bi-save me-2"></i> Guardar cambios
             </button>
           </form>
+
+          <hr class="my-4">
+
+          <div class="border border-danger-subtle rounded-4 p-3 bg-light">
+            <h6 class="fw-bold text-danger mb-2">
+              <i class="bi bi-person-x-fill me-2"></i>Desactivar cuenta
+            </h6>
+            <p class="small text-muted mb-3">
+              Esta acción desactivará tu cuenta. Si tienes pedidos pendientes, no podrás continuar.
+            </p>
+            <form id="deactivateAccountForm" novalidate>
+              <input type="hidden" name="id_usuario" value="<?php echo intval($_SESSION['usuario_id']); ?>">
+              <div class="mb-3">
+                <label class="form-label small">Escribe <strong>DESACTIVAR</strong> para confirmar</label>
+                <input type="text" name="confirmacion" class="form-control" placeholder="DESACTIVAR" required>
+              </div>
+              <button type="submit" class="btn btn-outline-danger w-100">
+                <i class="bi bi-shield-exclamation me-2"></i> Desactivar mi cuenta
+              </button>
+            </form>
+
+            <div class="mt-3 pt-3 border-top border-danger-subtle">
+              <h6 class="fw-bold text-danger mb-2">
+                <i class="bi bi-trash3-fill me-2"></i>Eliminar cuenta
+              </h6>
+              <p class="small text-muted mb-3">
+                Esta acción eliminará permanentemente tu cuenta y tus datos. Requiere confirmar con tu contraseña.
+              </p>
+              <form id="deleteAccountForm" novalidate>
+                <input type="hidden" name="id_usuario" value="<?php echo intval($_SESSION['usuario_id']); ?>">
+                <div class="mb-3">
+                  <label class="form-label small">Contraseña actual</label>
+                  <input type="password" name="contrasena" class="form-control" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">
+                  <i class="bi bi-trash3 me-2"></i> Eliminar cuenta
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -295,7 +416,15 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  const welcomeBackModal = document.getElementById('welcomeBackModal');
+  if (welcomeBackModal) {
+    const modal = bootstrap.Modal.getOrCreateInstance(welcomeBackModal);
+    modal.show();
+  }
+
   const profileForm = document.getElementById('profileForm');
+  const deactivateForm = document.getElementById('deactivateAccountForm');
+  const deleteForm = document.getElementById('deleteAccountForm');
   if (!profileForm) return;
 
   const alertBox = document.getElementById('profileAlert');
@@ -342,7 +471,14 @@ document.addEventListener('DOMContentLoaded', function () {
         body: formData
       });
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (error) {
+        data = { success: false, message: responseText || 'No se pudo procesar la respuesta del servidor.' };
+      }
+
       if (data.success) {
         showAlert('✅ ' + data.message, 'success');
         setTimeout(() => window.location.reload(), 1200);
@@ -358,6 +494,110 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+  if (deactivateForm) {
+    deactivateForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      if (alertBox) {
+        alertBox.style.display = 'none';
+        alertBox.textContent = '';
+        alertBox.className = 'alert mb-3';
+      }
+
+      const confirmation = deactivateForm.querySelector('[name="confirmacion"]')?.value?.trim() || '';
+      if (confirmation.toLowerCase() !== 'desactivar') {
+        showAlert('Escribe exactamente DESACTIVAR para confirmar.', 'danger');
+        return;
+      }
+
+      const submitBtn = deactivateForm.querySelector('[type="submit"]');
+      const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+      }
+
+      try {
+        const formData = new FormData(deactivateForm);
+        const response = await fetch('include/deactivate_account.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const responseText = await response.text();
+        let data = {};
+        try {
+          data = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+          data = { success: false, message: responseText || 'No se pudo procesar la respuesta del servidor.' };
+        }
+
+        if (data.success) {
+          showAlert('✅ ' + data.message, 'success');
+          setTimeout(() => window.location.href = 'index.php', 1500);
+        } else {
+          showAlert('⚠️ ' + data.message, 'danger');
+        }
+      } catch (error) {
+        showAlert('⚠️ Error de conexión con el servidor.', 'danger');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      }
+    });
+  }
+
+  if (deleteForm) {
+    deleteForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      if (alertBox) {
+        alertBox.style.display = 'none';
+        alertBox.textContent = '';
+        alertBox.className = 'alert mb-3';
+      }
+
+      const submitBtn = deleteForm.querySelector('[type="submit"]');
+      const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Eliminando...';
+      }
+
+      try {
+        const formData = new FormData(deleteForm);
+        const response = await fetch('include/delete_account.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const responseText = await response.text();
+        let data = {};
+        try {
+          data = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+          data = { success: false, message: responseText || 'No se pudo procesar la respuesta del servidor.' };
+        }
+
+        if (data.success) {
+          showAlert('✅ ' + data.message, 'success');
+          setTimeout(() => window.location.href = 'index.php', 1500);
+        } else {
+          showAlert('⚠️ ' + data.message, 'danger');
+        }
+      } catch (error) {
+        showAlert('⚠️ Error de conexión con el servidor.', 'danger');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      }
+    });
+  }
 
   function showAlert(message, type) {
     if (!alertBox) return;

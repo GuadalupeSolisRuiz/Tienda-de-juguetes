@@ -200,7 +200,132 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 7. Validación y envío asíncrono del formulario de registro
+  // 7. Flujo de recuperación de contraseña
+  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  const resetPasswordForm = document.getElementById('resetPasswordForm');
+  const forgotPasswordAlert = document.getElementById('forgotPasswordAlert');
+
+  if (forgotPasswordLink && forgotPasswordForm && resetPasswordForm) {
+    forgotPasswordLink.addEventListener('click', function (event) {
+      event.preventDefault();
+      forgotPasswordForm.style.display = 'block';
+      resetPasswordForm.style.display = 'none';
+      forgotPasswordAlert.style.display = 'none';
+      forgotPasswordAlert.textContent = '';
+      forgotPasswordAlert.className = 'alert mb-3';
+    });
+
+    forgotPasswordForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (!forgotPasswordForm.checkValidity()) {
+        forgotPasswordForm.classList.add('was-validated');
+        return;
+      }
+
+      const submitBtn = forgotPasswordForm.querySelector('[type="submit"]');
+      const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Enviando...';
+      }
+
+      const formData = new FormData(forgotPasswordForm);
+      formData.append('action', 'send');
+
+      try {
+        const response = await fetch('include/forgot_password.php', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          forgotPasswordAlert.className = 'alert alert-success mb-3';
+          forgotPasswordAlert.textContent = data.message;
+          forgotPasswordAlert.style.display = 'block';
+          forgotPasswordForm.style.display = 'none';
+          resetPasswordForm.style.display = 'block';
+        } else {
+          forgotPasswordAlert.className = 'alert alert-danger mb-3';
+          forgotPasswordAlert.textContent = '⚠️ ' + data.message;
+          forgotPasswordAlert.style.display = 'block';
+        }
+      } catch (error) {
+        forgotPasswordAlert.className = 'alert alert-danger mb-3';
+        forgotPasswordAlert.textContent = '⚠️ Error de conexión con el servidor.';
+        forgotPasswordAlert.style.display = 'block';
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      }
+    });
+
+    resetPasswordForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (!resetPasswordForm.checkValidity()) {
+        resetPasswordForm.classList.add('was-validated');
+        return;
+      }
+
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      if (newPassword.length < 8 || !/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+        forgotPasswordAlert.className = 'alert alert-danger mb-3';
+        forgotPasswordAlert.textContent = '⚠️ La contraseña debe tener al menos 8 caracteres y combinar letras y números.';
+        forgotPasswordAlert.style.display = 'block';
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        forgotPasswordAlert.className = 'alert alert-danger mb-3';
+        forgotPasswordAlert.textContent = '⚠️ Las contraseñas no coinciden.';
+        forgotPasswordAlert.style.display = 'block';
+        return;
+      }
+
+      const submitBtn = resetPasswordForm.querySelector('[type="submit"]');
+      const originalHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Actualizando...';
+      }
+
+      const formData = new FormData(resetPasswordForm);
+      formData.append('action', 'reset');
+
+      try {
+        const response = await fetch('include/forgot_password.php', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          forgotPasswordAlert.className = 'alert alert-success mb-3';
+          forgotPasswordAlert.textContent = data.message;
+          forgotPasswordAlert.style.display = 'block';
+          resetPasswordForm.reset();
+        } else {
+          forgotPasswordAlert.className = 'alert alert-danger mb-3';
+          forgotPasswordAlert.textContent = '⚠️ ' + data.message;
+          forgotPasswordAlert.style.display = 'block';
+        }
+      } catch (error) {
+        forgotPasswordAlert.className = 'alert alert-danger mb-3';
+        forgotPasswordAlert.textContent = '⚠️ Error de conexión con el servidor.';
+        forgotPasswordAlert.style.display = 'block';
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalHtml;
+        }
+      }
+    });
+  }
+
+  // 8. Validación y envío asíncrono del formulario de registro
   const regForm = document.getElementById('registrar');
   if (regForm) {
     let alertBox = document.getElementById('regAlert');
