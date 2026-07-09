@@ -11,8 +11,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.php" id="logo">
       <span class="logo-icon">🐻</span>
       <span class="logo-text">
-        <span class="logo-top">Tienda de</span>
-        <span class="logo-bottom">JUGUETES</span>
+        <span class="logo-top">NOVA</span>
+        <span class="logo-bottom">TOYS</span>
       </span>
     </a>
 
