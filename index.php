@@ -581,8 +581,8 @@
           <a class="d-flex align-items-center gap-2 text-decoration-none mb-3 footer-brand" href="index.php">
             <span class="logo-icon">🐻</span>
             <span class="logo-text">
-              <span class="logo-top">NOVA</span>
-              <span class="logo-bottom">TOYS</span>
+              <span class="logo-top">TOYS</span>
+              <span class="logo-bottom">NOVA</span>
             </span>
           </a>
           <p style="font-size: 0.82rem; color: #9CA3AF; line-height: 1.6;">
@@ -632,8 +632,8 @@
         <div class="col-lg-3 col-md-6 col-6">
           <h5>Contacto</h5>
           <ul>
-            <li><a href="mailto:hola@novatoys.com"><i
-                  class="bi bi-envelope me-2"></i>hola@novatoys.com</a></li>
+            <li><a href="mailto:hola@toysnova.com"><i
+                  class="bi bi-envelope me-2"></i>hola@toysnova.com</a></li>
             <li><a href="tel:+521234567890"><i class="bi bi-telephone me-2"></i>(123) 456-7890</a></li>
             <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Ciudad de México, MX</a></li>
           </ul>
@@ -643,7 +643,7 @@
 
       <div class="footer-bottom">
         <p>© 2026 Tienda de Juguetes. Todos los derechos reservados.</p>
-        <div class="footer-payment">
+        <!-- <div class="footer-payment">
           <span>Visa</span>
           <span>Mastercard</span>
           <span>PayPal</span>
@@ -651,7 +651,8 @@
         </div>
       </div>
     </div>
-  </footer>
+  </footer> --> 
+  <!-- se comento el metodo de pago -->
 
 
   <!-- Bootstrap 5 JS -->

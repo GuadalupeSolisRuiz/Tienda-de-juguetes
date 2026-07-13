@@ -31,8 +31,8 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.php" id="logo">
       <span class="logo-icon">🐻</span>
       <span class="logo-text">
-        <span class="logo-top">NOVA</span>
-        <span class="logo-bottom">TOYS</span>
+        <span class="logo-top">TOYS</span>
+        <span class="logo-bottom">NOVA</span>
       </span>
     </a>
 
@@ -65,7 +65,12 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
         <li class="nav-item"><a class="nav-link" href="#" id="nav-nosotros">Nosotros</a></li>
         <li class="nav-item"><a class="nav-link" href="#" id="nav-contacto">Contacto</a></li>
         <?php if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_rol']) && strtolower($_SESSION['usuario_rol']) === 'administrador'): ?>
-          <li class="nav-item"><a class="nav-link" href="gestion.php" id="nav-gestion">Gestión</a></li>
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="gestion.php" id="nav-gestion"
+              style="color: #7C3AED;">
+              Gestión
+            </a>
+          </li>
         <?php endif; ?>
       </ul>
 
