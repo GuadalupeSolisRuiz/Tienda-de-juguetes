@@ -11,6 +11,10 @@ $mensaje = '';
 $tipoMensaje = '';
 $rolFiltro = $_GET['rol'] ?? '';
 $fechaFiltro = $_GET['fecha'] ?? '';
+$hayFiltro = ($rolFiltro !== '' || $fechaFiltro !== '');
+$mensajeFiltro = '';
+$mensajeResultados = '';
+$textoVista = 'Todos los usuarios';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_usuario'], $_POST['id_rol'])) {
     $idUsuario = (int)$_POST['id_usuario'];
@@ -60,6 +64,33 @@ $resultado = $stmt->get_result();
 $usuarios = $resultado ? $resultado->fetch_all(MYSQLI_ASSOC) : [];
 $stmt->close();
 $conexion->close();
+
+if ($hayFiltro) {
+    $mensajeFiltro = 'Filtro aplicado con éxito.';
+    $mensajeResultados = 'Se encontraron ' . count($usuarios) . ' resultado(s).';
+
+    if ($rolFiltro !== '' && $fechaFiltro !== '') {
+        $nombreRol = '';
+        if ((int)$rolFiltro === 1) {
+            $nombreRol = 'clientes';
+        } elseif ((int)$rolFiltro === 2) {
+            $nombreRol = 'editores';
+        } elseif ((int)$rolFiltro === 3) {
+            $nombreRol = 'administradores';
+        }
+        $textoVista = 'Todos los ' . $nombreRol . ' del ' . date('d/m/Y', strtotime($fechaFiltro));
+    } elseif ($rolFiltro !== '') {
+        if ((int)$rolFiltro === 1) {
+            $textoVista = 'Todos los clientes';
+        } elseif ((int)$rolFiltro === 2) {
+            $textoVista = 'Todos los editores';
+        } elseif ((int)$rolFiltro === 3) {
+            $textoVista = 'Todos los administradores';
+        }
+    } elseif ($fechaFiltro !== '') {
+        $textoVista = 'Usuarios registrados el ' . date('d/m/Y', strtotime($fechaFiltro));
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -141,7 +172,7 @@ $conexion->close();
               <div class="col-12 col-lg-8">
                 <div class="border rounded-4 p-3 bg-light">
                   <h5 class="fw-bold mb-3"><i class="bi bi-funnel-fill me-2"></i>Filtros</h5>
-                  <form method="get" class="row g-2">
+                  <form method="get" id="filterForm" class="row g-2">
                     <div class="col-12 col-md-6">
                       <select name="rol" class="form-select form-select-sm">
                         <option value="">Todos los roles</option>
@@ -155,14 +186,30 @@ $conexion->close();
                     </div>
                     <div class="col-12 text-end">
                       <button class="btn btn-sm btn-outline-secondary" type="submit">Aplicar</button>
-                      <a class="btn btn-sm btn-outline-dark" href="gestion.php">Limpiar</a>
+                      <a class="btn btn-sm btn-outline-dark" href="gestion.php#resultados">Limpiar</a>
                     </div>
                   </form>
                 </div>
               </div>
             </div>
 
-            <div class="table-responsive">
+            <?php if ($mensajeFiltro !== ''): ?>
+              <div class="alert alert-success mb-3" role="status">
+                <div class="fw-semibold"><?php echo htmlspecialchars($mensajeFiltro); ?></div>
+                <div class="small mt-1"><?php echo htmlspecialchars($mensajeResultados); ?></div>
+              </div>
+            <?php endif; ?>
+
+            <div id="resultados" class="table-responsive">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                  <div class="fw-semibold text-dark"><?php echo htmlspecialchars($textoVista); ?></div>
+                  <div class="text-muted small">Resultados</div>
+                </div>
+                <?php if ($hayFiltro): ?>
+                  <span class="text-success"><?php echo count($usuarios); ?> encontrados</span>
+                <?php endif; ?>
+              </div>
               <table class="table align-middle">
                 <thead>
                   <tr>
@@ -247,6 +294,15 @@ $conexion->close();
             btn.innerHTML = originalText;
           }
         });
+      }
+
+      const resultsSection = document.getElementById('resultados');
+      const hasActiveFilter = window.location.search.includes('rol=') || window.location.search.includes('fecha=');
+
+      if (hasActiveFilter && resultsSection) {
+        setTimeout(function () {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
       }
 
       document.querySelectorAll('.delete-user-btn').forEach(function (btn) {

@@ -66,8 +66,8 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
         <li class="nav-item"><a class="nav-link" href="#" id="nav-contacto">Contacto</a></li>
         <?php if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_rol']) && strtolower($_SESSION['usuario_rol']) === 'administrador'): ?>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" href="gestion.php" id="nav-gestion"
-              style="color: #7C3AED;">
+            <a class="nav-link fw-semibold nav-gestion-pill" href="gestion.php" id="nav-gestion"
+              style="border: none; background: transparent; padding: 0.4rem 0.8rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.17); color: #7C3AED; transition: all 0.2s ease;">
               Gestión
             </a>
           </li>
