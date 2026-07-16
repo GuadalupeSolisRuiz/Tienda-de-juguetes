@@ -881,8 +881,71 @@ a.nav-link.nav-gestion-pill:hover,
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
 }
 
-.product-card:hover .product-image .emoji {
-  transform: scale(1.12) rotate(-5deg);
+.product-image .product-visual {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.4s;
+  padding: 20px;
+}
+
+.product-card:hover .product-image .emoji,
+.product-card:hover .product-image .product-visual {
+  transform: scale(1.04) rotate(-2deg);
+}
+
+.product-thumbnails {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+}
+
+.product-thumb {
+  width: 44px;
+  height: 44px;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-thumb:hover,
+.product-thumb.active {
+  border-color: var(--purple);
+  transform: translateY(-1px);
+}
+
+.product-card-hint {
+  position: absolute;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-light);
+  background: rgba(255, 255, 255, 0.88);
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
 }
 
 .product-badge {
@@ -1030,6 +1093,140 @@ a.nav-link.nav-gestion-pill:hover,
 
 .btn-add-cart i {
   font-size: 1.1rem;
+}
+
+.product-modal-content {
+  border: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.product-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 6;
+}
+
+.product-modal-image-wrap {
+  position: relative;
+  min-height: 380px;
+  background: linear-gradient(135deg, #FEF9EC 0%, #FFF3E0 50%, #FEF0F8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.product-modal-image {
+  width: auto;
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+.product-modal-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.product-modal-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0;
+  gap: 12px;
+}
+
+.product-modal-price {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  color: var(--text);
+}
+
+.product-modal-stock {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.product-modal-help {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: 8px;
+}
+
+/* MODAL NAV ARROWS */
+.modal-nav-arrows {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.modal-arrow {
+  pointer-events: all;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.modal-arrow i {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.modal-arrow:hover {
+  background: var(--purple);
+  color: #fff;
+  border-color: var(--purple);
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+}
+
+.modal-arrow:active {
+  transform: scale(0.96);
+}
+
+/* Indicador de vista actual (puntos) */
+.modal-view-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.modal-view-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  transition: background 0.25s, transform 0.25s;
+}
+
+.modal-view-dot.active {
+  background: var(--purple);
+  transform: scale(1.3);
 }
 
 /* PROMO BANNER */

@@ -1,0 +1,3 @@
+RegistroUsuario()
+Valida el nombre, el email, contraseña con mayuscula y numero.
+

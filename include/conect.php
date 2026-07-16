@@ -10,5 +10,7 @@ $conexion = new mysqli($servidor, $usuario, $pass, $bd);
 if ($conexion->connect_error) {
     $conexion_error = $conexion->connect_error;
     $conexion = null;
+} else {
+    $conexion->set_charset("utf8mb4");
 }
 ?>

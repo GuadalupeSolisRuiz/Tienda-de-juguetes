@@ -83,7 +83,93 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // 4. Formulario de Newsletter
+  // 4. Navegación de vistas en el modal de producto
+  const productModalEl = document.getElementById('productModal');
+  const modalImage = document.getElementById('modalProductImage');
+  const modalTitle = document.getElementById('productModalLabel');
+  const modalDescription = document.getElementById('modalProductDescription');
+  const modalPrice = document.getElementById('modalProductPrice');
+  const modalStock = document.getElementById('modalProductStock');
+  const modalArrowLeft = document.getElementById('modalArrowLeft');
+  const modalArrowRight = document.getElementById('modalArrowRight');
+  const modalDots = document.querySelectorAll('.modal-view-dot');
+
+  // Orden fijo de las vistas (ciclo)
+  const VIEW_ORDER = ['frente', 'derecha', 'izquierda'];
+  let currentModalViews = {};
+  let currentViewIndex = 0;
+
+  // Usar la API de Bootstrap para manejar el modal correctamente
+  const bsProductModal = productModalEl ? new bootstrap.Modal(productModalEl) : null;
+
+  function openProductModal() {
+    if (bsProductModal) bsProductModal.show();
+  }
+
+  function setModalView(index) {
+    currentViewIndex = ((index % VIEW_ORDER.length) + VIEW_ORDER.length) % VIEW_ORDER.length;
+    const view = VIEW_ORDER[currentViewIndex];
+    const imagePath = currentModalViews[view];
+    if (imagePath) {
+      modalImage.src = imagePath;
+      modalImage.alt = `${modalTitle.textContent || 'Producto'} - ${view}`;
+    }
+    // Actualizar puntos indicadores
+    modalDots.forEach(dot => {
+      dot.classList.toggle('active', dot.dataset.dot === view);
+    });
+  }
+
+  document.querySelectorAll('.product-card').forEach(card => {
+    const image = card.querySelector('.product-visual');
+    if (!image) return;
+
+    let views = {};
+    try {
+      views = image.dataset.views ? JSON.parse(image.dataset.views) : {};
+    } catch (e) {
+      views = {};
+    }
+
+    card.addEventListener('click', function (event) {
+      const target = event.target;
+      if (target.closest('.product-wishlist, .btn-add-cart')) return;
+
+      currentModalViews = views;
+      currentViewIndex = 0; // Siempre empezar desde "frente"
+      modalTitle.textContent = card.dataset.name || 'Producto';
+      modalDescription.textContent = card.dataset.description || '';
+      modalPrice.textContent = `$${card.dataset.price || '0'}`;
+      modalStock.textContent = `Stock disponible: ${card.dataset.stock || '0'}`;
+      setModalView(0);
+      openProductModal();
+    });
+
+    card.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  // Flecha derecha → avanza en el ciclo
+  if (modalArrowRight) {
+    modalArrowRight.addEventListener('click', function () {
+      setModalView(currentViewIndex + 1);
+    });
+  }
+
+  // Flecha izquierda → retrocede en el ciclo
+  if (modalArrowLeft) {
+    modalArrowLeft.addEventListener('click', function () {
+      setModalView(currentViewIndex - 1);
+    });
+  }
+
+  // El cierre del modal lo maneja Bootstrap via data-bs-dismiss="modal"
+
+  // 5. Formulario de Newsletter
   const newsletterForm = document.getElementById('newsletterForm');
   if (newsletterForm) {
     newsletterForm.addEventListener('submit', function (e) {
