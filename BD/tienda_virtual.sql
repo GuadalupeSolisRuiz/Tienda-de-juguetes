@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-05-2026 a las 10:36:07
+-- Tiempo de generación: 25-07-2026 a las 00:49:05
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,6 +43,13 @@ CREATE TABLE `categoria` (
   `id_categoria` int(11) NOT NULL,
   `nombre_categoria` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categoria`
+--
+
+INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`) VALUES
+(1, 'Niños');
 
 -- --------------------------------------------------------
 
@@ -95,6 +102,13 @@ CREATE TABLE `disponibilidad` (
   `id_disponible` int(11) NOT NULL,
   `tipo_disp` varchar(55) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `disponibilidad`
+--
+
+INSERT INTO `disponibilidad` (`id_disponible`, `tipo_disp`) VALUES
+(1, 'Disponible');
 
 -- --------------------------------------------------------
 
@@ -177,6 +191,13 @@ CREATE TABLE `productos` (
   `id_disponible` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`id_productos`, `nombre_producto`, `descripcion`, `precio`, `stock`, `imagen`, `id_categoria`, `id_disponible`) VALUES
+(2, 'Oso de peluche', 'Peluche cafe ultra suave de 60cm. Perfecto para abrazar.', 250.00, 100, '{\"frente\":\"Juguetes/osof.png\",\"izquierda\":\"Juguetes/osoi.png\",\"derecha\":\"Juguetes/osod.png\"}', 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -195,7 +216,8 @@ CREATE TABLE `rol` (
 INSERT INTO `rol` (`id_rol`, `nombre_rol`) VALUES
 (1, 'cliente'),
 (2, 'editor'),
-(3, 'administrador');
+(3, 'administrador'),
+(4, 'inactivo');
 
 -- --------------------------------------------------------
 
@@ -211,8 +233,23 @@ CREATE TABLE `usuarios` (
   `contraseña` varchar(255) NOT NULL,
   `telefono` varchar(70) NOT NULL,
   `fecha_registro` date NOT NULL,
-  `id_rol` int(11) NOT NULL
+  `id_rol` int(11) NOT NULL,
+  `sexo` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `correo`, `contraseña`, `telefono`, `fecha_registro`, `id_rol`, `sexo`) VALUES
+(2, 'Vanesa', 'Garcia', 'vane@mail.com', '$2y$10$N5cykhe.HJXgBFnKPnKsBeNDKiHiHcf7WTvV.w9cbvsiSN6o8gm2.', '1234567890', '2026-06-01', 2, NULL),
+(3, 'Edson', 'Quintana', 'edson@mail.com', '$2y$10$3DczX9LsqwHlMhlyJnJeUeQBaex9LvL.fb4xGbLrAozQ9HqFpNCX6', '1234567890', '2026-06-01', 3, NULL),
+(4, 'Ruben', 'Fuentes', 'ruben@mail.com', '$2y$10$zy2G.X5KW3F31SU0rz81EufF4WQm2iJeGpyfdSXfkIYmT/WmupGxK', '1234567890', '2026-06-02', 1, NULL),
+(5, 'Guadalupe', 'Solis', 'lupe@ejemplo.com', '$2y$10$ieNze1LufVzWWeFTCGXaT.DR/c1GyL2.Wkua5y/6ojdXedyBibWoO', '123456', '2026-06-04', 1, NULL),
+(6, 'Alexis', 'Gonzalez', 'alex.glez19@outlook.com', '$2y$10$F5fygdquvUYksXdZz6tcSeYucSKv6nyg7xldeehNS7qu7/Hn5oSni', '5577374656', '2026-07-06', 3, NULL),
+(9, 'Canelo', 'Perez', 'canelo@mail.com', '$2y$10$t3S3k0pFOkDQvzA/WnvH4eqcaeBRTo1QNFBk955UMjAmejXXQjKM.', '1234567890', '2026-07-09', 2, NULL),
+(10, 'Carlitos', 'Lechuga', 'carlitos@mail.com', '$2y$10$Cp/80oh9jXQZIjW7k7W2MOy.3.4t86OjwLhWVHMA5WTPDzvNcYXk6', '1234567890', '2026-07-09', 1, NULL),
+(12, 'Usuario', 'Pruebas', 'user@mail.com', '$2y$10$unxtl2P1a08B7TvBO6u3MuSZ0OBsw0Z1Vqh2BIq9mfRD54nEG7TYa', '5567834958', '2026-07-25', 3, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -331,7 +368,7 @@ ALTER TABLE `carrito`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_carrito`
@@ -355,7 +392,7 @@ ALTER TABLE `direcciones`
 -- AUTO_INCREMENT de la tabla `disponibilidad`
 --
 ALTER TABLE `disponibilidad`
-  MODIFY `id_disponible` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_disponible` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `estado`
@@ -391,19 +428,19 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
 --
 ALTER TABLE `rol`
-  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Restricciones para tablas volcadas
