@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-07-2026 a las 00:49:05
+-- Tiempo de generación: 27-07-2026 a las 19:36:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -196,7 +196,8 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_productos`, `nombre_producto`, `descripcion`, `precio`, `stock`, `imagen`, `id_categoria`, `id_disponible`) VALUES
-(2, 'Oso de peluche', 'Peluche cafe ultra suave de 60cm. Perfecto para abrazar.', 250.00, 100, '{\"frente\":\"Juguetes/osof.png\",\"izquierda\":\"Juguetes/osoi.png\",\"derecha\":\"Juguetes/osod.png\"}', 1, 1);
+(2, 'Oso de peluche', 'Peluche cafe ultra suave de 60cm. Perfecto para abrazar.', 250.00, 100, '{\"frente\":\"Juguetes/osof.png\",\"izquierda\":\"Juguetes/osoi.png\",\"derecha\":\"Juguetes/osod.png\"}', 1, 1),
+(3, 'Robot Amigable', 'Robot amigoso', 500.00, 20, '{\"frente\":\"Juguetes/prod_1785173393_frente_750.png\",\"izquierda\":\"Juguetes/prod_1785173393_izquierda_671.png\",\"derecha\":\"Juguetes/prod_1785173393_derecha_447.png\"}', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -428,7 +429,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
