@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-07-2026 a las 19:43:15
+-- Tiempo de generación: 30-07-2026 a las 12:40:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -49,7 +49,9 @@ CREATE TABLE `categoria` (
 --
 
 INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`) VALUES
-(1, 'Niños');
+(1, 'Niños'),
+(2, 'Niñas'),
+(3, 'Bebes');
 
 -- --------------------------------------------------------
 
@@ -183,7 +185,7 @@ CREATE TABLE `pedidos` (
 CREATE TABLE `productos` (
   `id_productos` int(11) NOT NULL,
   `nombre_producto` varchar(55) NOT NULL,
-  `descripcion` varchar(255) NOT NULL,
+  `descripcion` text NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   `stock` int(11) NOT NULL,
   `imagen` varchar(255) NOT NULL,
@@ -196,8 +198,36 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_productos`, `nombre_producto`, `descripcion`, `precio`, `stock`, `imagen`, `id_categoria`, `id_disponible`) VALUES
-(3, 'Robot Amigable', 'Robot amigoso', 500.00, 20, '{\"frente\":\"Juguetes/prod_1785173393_frente_750.png\",\"izquierda\":\"Juguetes/prod_1785173393_izquierda_671.png\",\"derecha\":\"Juguetes/prod_1785173393_derecha_447.png\"}', 1, 1),
-(4, 'Oso de peluche', 'Peluche cafe ultra suave de 60cm. Perfecto para abrazar.', 500.00, 100, '{\"frente\":\"Juguetes/prod_1785174156_frente_971.png\",\"izquierda\":\"Juguetes/prod_1785174156_izquierda_901.png\",\"derecha\":\"Juguetes/prod_1785174156_derecha_378.png\"}', 1, 1);
+(8, 'Oso de peluche', 'Un adorable oso de peluche diseñado para brindar compañía y ternura a los más pequeños. Su textura suave y agradable lo convierte en un compañero ideal para jugar, abrazar y acompañar al bebé durante sus momentos de descanso.', 250.00, 100, '{\"frente\":\"Juguetes/prod_8_frente_1785395438.webp\",\"izquierda\":\"Juguetes/prod_8_izquierda_1785395438.webp\",\"derecha\":\"Juguetes/prod_8_derecha_1785395438.webp\"}', 3, 1),
+(11, 'Sonajero', 'Divertida y adorable sonaja con forma de oso, diseñada especialmente para estimular los sentidos del bebé mientras juega. Su diseño fácil de sujetar y sus sonidos suaves ayudan a despertar la curiosidad y mantener al pequeño entretenido.', 159.00, 100, '{\"frente\":\"Juguetes/prod_1785395143_frente_334.webp\",\"izquierda\":\"Juguetes/prod_1785395143_izquierda_680.webp\",\"derecha\":\"Juguetes/prod_1785395143_derecha_555.webp\"}', 3, 1),
+(12, 'Capitan Pulpo', 'Un adorable pulpo sensorial diseñado para estimular los sentidos del bebé mientras juega. Sus diferentes texturas, colores y suaves tentáculos ofrecen una experiencia divertida y entretenida, ayudando al pequeño a explorar mediante el tacto y la interacción.', 300.00, 100, '{\"frente\":\"Juguetes/prod_1785395671_frente_958.webp\",\"izquierda\":\"Juguetes/prod_1785395671_izquierda_427.webp\",\"derecha\":\"Juguetes/prod_1785395671_derecha_628.webp\"}', 3, 1),
+(13, 'Control juega y aprende', 'Un divertido control de videojuegos diseñado especialmente para estimular los sentidos de los bebés mientras juegan. Cuenta con botones, colores y elementos interactivos que ayudan a despertar su curiosidad y favorecer la exploración mediante el tacto, la vista y el oído.', 450.00, 100, '{\"frente\":\"Juguetes/prod_1785395782_frente_639.webp\",\"izquierda\":\"Juguetes/prod_1785395782_izquierda_209.webp\",\"derecha\":\"Juguetes/prod_1785395782_derecha_349.webp\"}', 3, 1),
+(14, 'Robot Amigable', '¡Un robot lleno de diversión y tecnología! Este adorable robot interactivo cuenta con ojos LED expresivos, brazos articulados y un diseño amigable que encantará a los pequeños. Perfecto para estimular la imaginación y el interés por la robótica. Incluye sonidos divertidos y movimientos programables. Ideal para niños de 5 años en adelante que aman la tecnología y los juegos creativos.', 349.00, 100, '{\"frente\":\"Juguetes/prod_1785396562_frente_969.webp\",\"izquierda\":\"Juguetes/prod_1785396562_izquierda_408.webp\",\"derecha\":\"Juguetes/prod_1785396562_derecha_532.webp\"}', 1, 1),
+(15, 'Pony Magico', 'Pony Mágico es un adorable juguete diseñado para estimular la imaginación y la creatividad. Gracias a su suave melena y cola, pueden peinarlo y crear diferentes estilos con el cepillo incluido.', 279.00, 100, '{\"frente\":\"Juguetes/prod_1785397834_frente_375.webp\",\"izquierda\":\"Juguetes/prod_1785397834_izquierda_189.webp\",\"derecha\":\"Juguetes/prod_1785397834_derecha_325.webp\"}', 2, 1),
+(16, 'Auto de carreras RC', '¡Velocidad y emoción en un solo juguete! Este increíble auto de carreras a control remoto ofrece una experiencia de conducción emocionante con luces LED brillantes y sonidos realistas de motor. Su diseño aerodinámico y ruedas de alto agarre lo hacen perfecto para carreras indoor y outdoor. Control remoto incluido con alcance de hasta 20 metros. Recomendado para niños de 6 años en adelante.', 399.00, 100, '{\"frente\":\"Juguetes/prod_1785403943_frente_115.webp\",\"izquierda\":\"Juguetes/prod_1785403943_izquierda_616.webp\",\"derecha\":\"Juguetes/prod_1785403943_derecha_360.webp\"}', 1, 1),
+(17, 'Cohete Espacial', '¡Despega hacia la aventura espacial! Este impresionante cohete espacial combina diversión y aprendizaje con su sistema de lanzamiento a presión de agua. Incluye base de lanzamiento, ventanas coloridas y detalles realistas. Perfecto para explorar conceptos de física y astronomía de forma práctica. Estimula el interés por la ciencia y la exploración espacial. Ideal para niños de 7 años en adelante.', 319.00, 100, '{\"frente\":\"Juguetes/prod_1785404017_frente_944.webp\",\"izquierda\":\"Juguetes/prod_1785404017_izquierda_683.webp\",\"derecha\":\"Juguetes/prod_1785404017_derecha_479.webp\"}', 1, 1),
+(18, 'Bicicleta', '¡La bicicleta perfecta para los pequeños aventureros! Diseñada especialmente para niños, esta bicicleta de juguete destaca por su estilo deportivo, colores llamativos y acabados realistas. Su estructura resistente y sus ruedas de gran tamaño permiten que los pequeños disfruten de horas de diversión mientras desarrollan su imaginación creando emocionantes paseos y nuevas aventuras. Es un juguete seguro, atractivo y perfecto para acompañar el crecimiento de los niños mediante el juego creativo.', 899.00, 100, '{\"frente\":\"Juguetes/prod_1785404098_frente_713.webp\",\"izquierda\":\"Juguetes/prod_1785404098_izquierda_608.webp\",\"derecha\":\"Juguetes/prod_1785404098_derecha_599.webp\"}', 1, 1),
+(19, 'Avion', '¡Los pequeños pilotos estarán listos para despegar! Este avión de juguete ha sido diseñado especialmente para niños que disfrutan imaginar increíbles aventuras en el cielo. Su diseño aerodinámico, inspirado en un avión moderno en pleno vuelo, junto con sus colores llamativos y acabados detallados, hacen de este juguete la opción ideal para estimular la creatividad y la diversión durante horas.', 299.00, 100, '{\"frente\":\"Juguetes/prod_1785404163_frente_289.webp\",\"izquierda\":\"Juguetes/prod_1785404163_izquierda_850.webp\",\"derecha\":\"Juguetes/prod_1785404163_derecha_131.webp\"}', 1, 1),
+(20, 'Pistola', '¡Diversión intergaláctica para los pequeños exploradores! La Galaxy Blaster ha sido creada especialmente para niños, con un diseño futurista, colores vivos y una apariencia completamente infantil inspirada en el espacio. Es perfecta para recrear aventuras de ciencia ficción, desarrollar la imaginación y disfrutar de emocionantes juegos de roles. Fabricada con materiales resistentes y seguros, brinda horas de entretenimiento en un ambiente de diversión.', 249.00, 100, '{\"frente\":\"Juguetes/prod_1785404237_frente_738.webp\",\"izquierda\":\"Juguetes/prod_1785404237_izquierda_332.webp\",\"derecha\":\"Juguetes/prod_1785404237_derecha_737.webp\"}', 1, 1),
+(21, 'Princesa de la Estrella Mágica', 'La Princesa de la Estrella Mágica es una hermosa muñeca de fantasía con un elegante vestido brillante y accesorios reales. Perfecta para crear historias mágicas y vivir aventuras llenas de imaginación.', 329.00, 100, '{\"frente\":\"Juguetes/prod_1785404328_frente_632.webp\",\"izquierda\":\"Juguetes/prod_1785404329_izquierda_298.webp\",\"derecha\":\"Juguetes/prod_1785404329_derecha_798.webp\"}', 2, 1),
+(22, 'Princesa Rosa', 'Princesa Rosa es una encantadora muñeca con un delicado vestido rosa y una elegante corona dorada. Su diseño clásico la convierte en la compañera ideal para crear cuentos de hadas y momentos llenos de diversión.', 249.00, 100, '{\"frente\":\"Juguetes/prod_1785404380_frente_672.webp\",\"izquierda\":\"Juguetes/prod_1785404380_izquierda_873.webp\",\"derecha\":\"Juguetes/prod_1785404380_derecha_281.webp\"}', 2, 1),
+(23, 'Centro de actividades interactivo \"Conejito Musical', 'Descripción: Es un centro de actividades diseñado para estimular el desarrollo sensorial y motriz del bebé mediante sonidos, luces, botones y piezas móviles.  Características: Conejito sonriente como figura principal. Teléfono de juguete. Teclado con números y figuras. Botones de colores con sonidos. Rodillo giratorio con imágenes. Material plástico resistente y bordes redondeados. Favorece la coordinación mano-ojo y el reconocimiento de colores y números.', 329.00, 100, '{\"frente\":\"Juguetes/prod_1785404704_frente_521.webp\",\"izquierda\":\"Juguetes/prod_1785404704_izquierda_686.webp\",\"derecha\":\"Juguetes/prod_1785404704_derecha_201.webp\"}', 3, 1),
+(24, 'Volante interactivo con avión', 'Descripción: Juguete interactivo con volante y accesorios que simula la conducción de un vehículo y estimula la imaginación mediante sonidos y movimientos.  Características: Volante giratorio. Avión de juguete integrado. Hélice móvil. Interruptor lateral. Sonidos y efectos interactivos. Fácil de sujetar para manos pequeñas. Favorece la coordinación y el juego de imitación.', 259.00, 100, '{\"frente\":\"Juguetes/prod_1785404759_frente_917.webp\",\"izquierda\":\"Juguetes/prod_1785404759_izquierda_615.webp\",\"derecha\":\"Juguetes/prod_1785404759_derecha_744.webp\"}', 3, 1),
+(25, 'Gimnasio musical para bebé', 'Descripción: Tapete de actividades para bebés con arco de juguetes colgantes y piano musical que estimula el desarrollo físico y sensorial desde los primeros meses.  Características: Tapete acolchado. Arco con juguetes colgantes. Piano musical con luces y sonidos. Ayuda al desarrollo de brazos, piernas y coordinación. Estimula la percepción visual y auditiva.', 699.00, 100, '{\"frente\":\"Juguetes/prod_1785404989_frente_612.webp\",\"izquierda\":\"Juguetes/prod_1785404989_izquierda_813.webp\",\"derecha\":\"Juguetes/prod_1785404989_derecha_255.webp\"}', 3, 1),
+(26, 'Dinosaurio de Peluche', 'Dinosaurio', 249.00, 100, '{\"frente\":\"Juguetes/prod_1785405104_frente_923.webp\",\"izquierda\":\"Juguetes/prod_1785405104_izquierda_355.webp\",\"derecha\":\"Juguetes/prod_1785405104_derecha_808.webp\"}', 1, 1),
+(27, 'Leon de Peluche', 'Leon de peluche', 269.00, 100, '{\"frente\":\"Juguetes/prod_1785405153_frente_752.webp\",\"izquierda\":\"Juguetes/prod_1785405154_izquierda_356.webp\",\"derecha\":\"Juguetes/prod_1785405154_derecha_591.webp\"}', 1, 1),
+(28, 'Soldado de juguete', 'Soldado', 229.00, 100, '{\"frente\":\"Juguetes/prod_1785405197_frente_836.webp\",\"izquierda\":\"Juguetes/prod_1785405198_izquierda_909.webp\",\"derecha\":\"Juguetes/prod_1785405198_derecha_614.webp\"}', 1, 1),
+(29, 'Pista de carreras', 'Pista', 499.00, 100, '{\"frente\":\"Juguetes/prod_1785405267_frente_122.webp\",\"izquierda\":\"Juguetes/prod_1785405267_izquierda_313.webp\",\"derecha\":\"Juguetes/prod_1785405267_derecha_777.webp\"}', 1, 1),
+(30, 'Conejo Rosa', 'Conejo rosado de peluche', 250.00, 100, '{\"frente\":\"Juguetes/prod_1785405461_frente_544.webp\",\"izquierda\":\"Juguetes/prod_1785405462_izquierda_616.webp\",\"derecha\":\"Juguetes/prod_1785405462_derecha_425.webp\"}', 2, 1),
+(31, 'Auto Rosa', 'Auto rosado', 300.00, 100, '{\"frente\":\"Juguetes/prod_1785405497_frente_650.webp\",\"izquierda\":\"Juguetes/prod_1785405497_izquierda_304.webp\",\"derecha\":\"Juguetes/prod_1785405497_derecha_900.webp\"}', 2, 1),
+(32, 'Moto Rosada', 'Motocicleta rosada', 450.00, 100, '{\"frente\":\"Juguetes/prod_1785405534_frente_949.webp\",\"izquierda\":\"Juguetes/prod_1785405534_izquierda_843.webp\",\"derecha\":\"Juguetes/prod_1785405534_derecha_144.webp\"}', 2, 1),
+(33, 'Casa de juguete', 'Casa de juguete', 600.00, 100, '{\"frente\":\"Juguetes/prod_1785405605_frente_824.webp\",\"izquierda\":\"Juguetes/prod_1785405605_izquierda_406.webp\",\"derecha\":\"Juguetes/prod_1785405605_derecha_623.webp\"}', 2, 1),
+(34, 'Castillo de juguete', 'Castillo de juguete', 400.00, 100, '{\"frente\":\"Juguetes/prod_1785405643_frente_612.webp\",\"izquierda\":\"Juguetes/prod_1785405643_izquierda_691.webp\",\"derecha\":\"Juguetes/prod_1785405643_derecha_601.webp\"}', 2, 1),
+(35, 'Cocina de juguete', 'Cocina integral de juguete', 550.00, 99, '{\"frente\":\"Juguetes/prod_35_frente_1785406155.webp\",\"izquierda\":\"Juguetes/prod_35_izquierda_1785406155.webp\",\"derecha\":\"Juguetes/prod_35_derecha_1785406155.webp\"}', 2, 1),
+(36, 'Muñeca de juguete', 'Muñeca', 330.00, 99, '{\"frente\":\"Juguetes/prod_1785405727_frente_140.webp\",\"izquierda\":\"Juguetes/prod_36_izquierda_1785406210.webp\",\"derecha\":\"Juguetes/prod_36_derecha_1785406210.webp\"}', 2, 1),
+(37, 'Mesedora', 'Una adorable mecedora con diseño de jirafa, creada para brindar diversión y comodidad a los más pequeños. Su diseño tierno y colorido invita al bebé a disfrutar de momentos de juego mientras desarrolla el equilibrio y la coordinación de forma entretenida.', 1199.00, 99, '{\"frente\":\"Juguetes/prod_1785405792_frente_912.webp\",\"izquierda\":\"Juguetes/prod_1785405792_izquierda_298.webp\",\"derecha\":\"Juguetes/prod_1785405792_derecha_644.webp\"}', 3, 1),
+(38, 'Perro de Peluche', 'Un tierno y suave compañero diseñado para acompañar a los más pequeños durante sus juegos y momentos de descanso. Su adorable diseño de perrito y textura agradable lo convierten en un juguete perfecto para abrazar, explorar y desarrollar el vínculo afectivo del bebé.', 429.00, 100, '{\"frente\":\"Juguetes/prod_1785405869_frente_749.webp\",\"izquierda\":\"Juguetes/prod_1785405869_izquierda_854.webp\",\"derecha\":\"Juguetes/prod_1785405870_derecha_186.webp\"}', 3, 1),
+(39, 'Xilofono', 'Un colorido y divertido xilófono diseñado para que los más pequeños descubran el mundo de la música mientras juegan. Sus teclas de diferentes colores permiten al bebé experimentar con sonidos y desarrollar su curiosidad de manera entretenida.', 299.00, 100, '{\"frente\":\"Juguetes/prod_1785405926_frente_485.webp\",\"izquierda\":\"Juguetes/prod_1785405926_izquierda_439.webp\",\"derecha\":\"Juguetes/prod_1785405926_derecha_216.webp\"}', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -248,7 +278,7 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre`, `apellido`, `correo`, `contrase�
 (4, 'Ruben', 'Fuentes', 'ruben@mail.com', '$2y$10$zy2G.X5KW3F31SU0rz81EufF4WQm2iJeGpyfdSXfkIYmT/WmupGxK', '1234567890', '2026-06-02', 1, NULL),
 (5, 'Guadalupe', 'Solis', 'lupe@ejemplo.com', '$2y$10$ieNze1LufVzWWeFTCGXaT.DR/c1GyL2.Wkua5y/6ojdXedyBibWoO', '123456', '2026-06-04', 1, NULL),
 (6, 'Alexis', 'Gonzalez', 'alex.glez19@outlook.com', '$2y$10$F5fygdquvUYksXdZz6tcSeYucSKv6nyg7xldeehNS7qu7/Hn5oSni', '5577374656', '2026-07-06', 3, NULL),
-(9, 'Canelo', 'Perez', 'canelo@mail.com', '$2y$10$t3S3k0pFOkDQvzA/WnvH4eqcaeBRTo1QNFBk955UMjAmejXXQjKM.', '1234567890', '2026-07-09', 2, NULL),
+(9, 'Canelo', 'Perez', 'canelo@mail.com', '$2y$10$0HE8jvT4ZoHPP9w2UnkSCuPPG1XQdum3Yq5YOeVWUmYvrZQ/bfo/W', '1234567890', '2026-07-09', 2, NULL),
 (10, 'Carlitos', 'Lechuga', 'carlitos@mail.com', '$2y$10$Cp/80oh9jXQZIjW7k7W2MOy.3.4t86OjwLhWVHMA5WTPDzvNcYXk6', '1234567890', '2026-07-09', 1, NULL),
 (12, 'Usuario', 'Pruebas', 'user@mail.com', '$2y$10$unxtl2P1a08B7TvBO6u3MuSZ0OBsw0Z1Vqh2BIq9mfRD54nEG7TYa', '5567834958', '2026-07-25', 3, NULL);
 
@@ -369,7 +399,7 @@ ALTER TABLE `carrito`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_carrito`
@@ -429,7 +459,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_productos` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
