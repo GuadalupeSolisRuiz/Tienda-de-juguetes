@@ -12,13 +12,53 @@ $categoriasConfig = [
         'desc'        => 'Explora nuestro catálogo completo de juguetes divertidos y educativos para todas las edades.',
         'keywords'    => []
     ],
-    'nina' => [
-        'label'       => 'Niñas',
-        'emoji'       => '👧',
-        'color'       => '#EC4899',
-        'bg'          => '#FDF2F8',
-        'desc'        => 'Descubre la mejor selección de juguetes, muñecas y juegos especiales para niñas.',
-        'keywords'    => ['Niña', 'Niñas', 'Muñeca', 'Princesa']
+    'peluches' => [
+        'label'       => 'Peluches',
+        'emoji'       => '🧸',
+        'color'       => '#F59E0B',
+        'bg'          => '#FEF3C7',
+        'desc'        => 'Peluches ultra suaves de todos los tamaños, ideales para abrazar y acompañar.',
+        'keywords'    => ['Peluche', 'Peluches', 'Oso', 'León', 'Dinosaurio', 'Conejo', 'Perro']
+    ],
+    'educativos' => [
+        'label'       => 'Educativos',
+        'emoji'       => '🧩',
+        'color'       => '#8B5CF6',
+        'bg'          => '#F5F3FF',
+        'desc'        => 'Juegos didácticos, estimulación temprana y juguetes de aprendizaje para agilizar la mente.',
+        'keywords'    => ['Educativo', 'Educativos', 'Didáctico', 'Puzzle', 'Rompecabezas', 'Bloques', 'Gimnasio', 'Sonajero', 'Xilófono', 'Cocina']
+    ],
+    'vehiculos' => [
+        'label'       => 'Vehículos',
+        'emoji'       => '🏎️',
+        'color'       => '#EF4444',
+        'bg'          => '#FEF2F2',
+        'desc'        => 'Autos de carreras, pistas, motocicletas y aviones llenos de velocidad y emoción.',
+        'keywords'    => ['Vehículo', 'Vehículos', 'Auto', 'Carro', 'Moto', 'Motocicleta', 'Avión', 'Pista', 'Carreras']
+    ],
+    'electronicos' => [
+        'label'       => 'Electrónicos',
+        'emoji'       => '🎮',
+        'color'       => '#6366F1',
+        'bg'          => '#EEF2FF',
+        'desc'        => 'Robots, controles remotos y juguetes interactivos con sonidos y luces.',
+        'keywords'    => ['Electrónico', 'Electrónicos', 'Robot', 'Control', 'Digital', 'Volante', 'Interactivo']
+    ],
+    'munecas' => [
+        'label'       => 'Muñecas',
+        'emoji'       => '🪆',
+        'color'       => '#D946EF',
+        'bg'          => '#FDF4FF',
+        'desc'        => 'Muñecas articuladas, princesas, castillos y casas de juguetes para crear maravillosas historias.',
+        'keywords'    => ['Muñeca', 'Muñecas', 'Princesa', 'Castillo', 'Casa', 'Soldado', 'Pony']
+    ],
+    'exterior' => [
+        'label'       => 'Exterior',
+        'emoji'       => '🚲',
+        'color'       => '#14B8A6',
+        'bg'          => '#F0FDFA',
+        'desc'        => 'Bicicletas, mecedoras, cohetes y juguetes al aire libre para disfrutar fuera de casa.',
+        'keywords'    => ['Exterior', 'Aire libre', 'Bicicleta', 'Cohete', 'Mecedora', 'Pistola']
     ],
     'nino' => [
         'label'       => 'Niños',
@@ -26,7 +66,15 @@ $categoriasConfig = [
         'color'       => '#3B82F6',
         'bg'          => '#EFF6FF',
         'desc'        => 'Encuentra autos, figuras de acción, superhéroes y aventuras para niños.',
-        'keywords'    => ['Niño', 'Niños', 'Auto', 'Vehículo', 'Héroe']
+        'keywords'    => ['Niño', 'Niños', 'Héroe']
+    ],
+    'nina' => [
+        'label'       => 'Niñas',
+        'emoji'       => '👧',
+        'color'       => '#EC4899',
+        'bg'          => '#FDF2F8',
+        'desc'        => 'Descubre la mejor selección de juguetes, muñecas y juegos especiales para niñas.',
+        'keywords'    => ['Niña', 'Niñas']
     ],
     'bebe' => [
         'label'       => 'Bebés',
@@ -34,31 +82,7 @@ $categoriasConfig = [
         'color'       => '#10B981',
         'bg'          => '#ECFDF5',
         'desc'        => 'Juguetes suaves, sonajeros y estimulación temprana totalmente seguros para bebés.',
-        'keywords'    => ['Bebé', 'Bebés', 'Bebe', 'Sonajero', 'Estimulación', 'Cuna']
-    ],
-    'educativos' => [
-        'label'       => 'Educativos',
-        'emoji'       => '🧩',
-        'color'       => '#8B5CF6',
-        'bg'          => '#F5F3FF',
-        'desc'        => 'Juegos didácticos, rompecabezas y juguetes de aprendizaje para agilizar la mente.',
-        'keywords'    => ['Educativo', 'Educativos', 'Didáctico', 'Puzzle', 'Rompecabezas', 'Bloques']
-    ],
-    'electronicos' => [
-        'label'       => 'Electrónicos',
-        'emoji'       => '🎮',
-        'color'       => '#6366F1',
-        'bg'          => '#EEF2FF',
-        'desc'        => 'Robots, controles remotos, konsolas y juguetes interactivos con sonidos y luces.',
-        'keywords'    => ['Electrónico', 'Electrónicos', 'Robot', 'Control', 'Batería', 'Digital', 'Controlador']
-    ],
-    'peluches' => [
-        'label'       => 'Peluches',
-        'emoji'       => '🧸',
-        'color'       => '#F59E0B',
-        'bg'          => '#FEF3C7',
-        'desc'        => 'Peluches ultra suaves de todos los tamaños, ideales para abrazar y acompañar.',
-        'keywords'    => ['Peluche', 'Peluches', 'Oso', 'Suave', 'Almohada']
+        'keywords'    => ['Bebé', 'Bebés', 'Bebe', 'Cuna']
     ]
 ];
 

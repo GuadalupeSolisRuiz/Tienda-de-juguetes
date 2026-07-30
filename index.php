@@ -66,13 +66,29 @@
       $select_stmt->close();
     }
 
-    // ── Imagen aleatoria por categoría para la sección "Explora por categoría" ──
-    $imgsCat = ['nina' => null, 'nino' => null, 'bebe' => null];
-    $countsCat = ['nina' => 0, 'nino' => 0, 'bebe' => 0];
-    $mapCat = ['Niña' => 'nina', 'Niño' => 'nino', 'Bebé' => 'bebe'];
-    foreach ($mapCat as $nombre_db => $slug) {
+    // ── Imagen aleatoria y conteo por categoría para la sección "Explora por categoría" ──
+    $mapCat = [
+      'peluches'     => ['db' => 'Peluches',    'keywords' => ['Peluche', 'Oso', 'León', 'Dinosaurio', 'Conejo', 'Perro']],
+      'educativos'   => ['db' => 'Educativos',  'keywords' => ['Educativo', 'Didáctico', 'Gimnasio', 'Sonajero', 'Xilófono', 'Cocina', 'Pulpo']],
+      'vehiculos'    => ['db' => 'Vehículos',   'keywords' => ['Vehículo', 'Auto', 'Carro', 'Moto', 'Avión', 'Pista', 'Carreras']],
+      'electronicos' => ['db' => 'Electrónicos','keywords' => ['Electrónico', 'Robot', 'Control', 'Volante', 'Interactivo']],
+      'munecas'      => ['db' => 'Muñecas',     'keywords' => ['Muñeca', 'Princesa', 'Castillo', 'Casa', 'Soldado', 'Pony']],
+      'exterior'     => ['db' => 'Exterior',    'keywords' => ['Exterior', 'Bicicleta', 'Cohete', 'Mecedora', 'Pistola']],
+      'nino'         => ['db' => 'Niños',       'keywords' => ['Niño', 'Robot', 'Auto', 'Cohete', 'Soldado', 'Avión', 'Pista', 'Carreras']],
+      'nina'         => ['db' => 'Niñas',       'keywords' => ['Niña', 'Muñeca', 'Princesa', 'Pony', 'Rosa', 'Cocina', 'Casa', 'Castillo']],
+      'bebe'         => ['db' => 'Bebés',       'keywords' => ['Bebé', 'Sonajero', 'Pulpo', 'Oso', 'Gimnasio', 'Mecedora', 'Xilófono']]
+    ];
+
+    $imgsCat = [];
+    $countsCat = [];
+
+    foreach ($mapCat as $slug => $catInfo) {
+      $nombre_db = $catInfo['db'];
+      $keywords  = $catInfo['keywords'] ?? $catInfo['kw'] ?? [];
+
+      // 1. Intentar buscar productos por categoría directa (id_categoria)
       $cq = $conexion->prepare("
-        SELECT p.imagen, COUNT(*) OVER() AS total
+        SELECT p.imagen
         FROM productos p
         INNER JOIN categoria c ON p.id_categoria = c.id_categoria
         WHERE c.nombre_categoria = ? AND p.id_disponible = 1
@@ -82,17 +98,64 @@
       $cq->execute();
       $crow = $cq->get_result()->fetch_assoc();
       $cq->close();
-      if ($crow) {
-        $v = json_decode($crow['imagen'], true);
-        $imgsCat[$slug] = is_array($v) ? ($v['frente'] ?? null) : $crow['imagen'];
-      }
-      // count
+
       $ccount = $conexion->prepare("SELECT COUNT(*) AS n FROM productos p INNER JOIN categoria c ON p.id_categoria=c.id_categoria WHERE c.nombre_categoria=? AND p.id_disponible=1");
       $ccount->bind_param('s', $nombre_db);
       $ccount->execute();
       $crow2 = $ccount->get_result()->fetch_assoc();
       $ccount->close();
-      $countsCat[$slug] = (int) ($crow2['n'] ?? 0);
+      $totalCount = (int) ($crow2['n'] ?? 0);
+
+      // 2. Si no hay productos con la categoría exacta en FK, buscar por palabras clave
+      if ($totalCount === 0 && !empty($keywords)) {
+        $whereClauses = [];
+        $params = [];
+        $types = "";
+        foreach ($keywords as $kw) {
+          $whereClauses[] = "p.nombre_producto LIKE ? OR p.descripcion LIKE ?";
+          $params[] = "%" . $kw . "%";
+          $params[] = "%" . $kw . "%";
+          $types .= "ss";
+        }
+        $whereSql = implode(" OR ", $whereClauses);
+
+        // Contar coincidencias
+        $kwCountStmt = $conexion->prepare("SELECT COUNT(DISTINCT p.id_productos) AS n FROM productos p WHERE p.id_disponible = 1 AND ({$whereSql})");
+        if ($kwCountStmt) {
+          $kwCountStmt->bind_param($types, ...$params);
+          $kwCountStmt->execute();
+          $resKwCount = $kwCountStmt->get_result()->fetch_assoc();
+          $totalCount = (int) ($resKwCount['n'] ?? 0);
+          $kwCountStmt->close();
+        }
+
+        // Obtener imagen aleatoria por palabras clave
+        $kwImgStmt = $conexion->prepare("SELECT p.imagen FROM productos p WHERE p.id_disponible = 1 AND ({$whereSql}) ORDER BY RAND() LIMIT 1");
+        if ($kwImgStmt) {
+          $kwImgStmt->bind_param($types, ...$params);
+          $kwImgStmt->execute();
+          $crow = $kwImgStmt->get_result()->fetch_assoc();
+          $kwImgStmt->close();
+        }
+      }
+
+      // 3. Fallback final si no se encontró imagen especifica
+      if (!$crow) {
+        $fallStmt = $conexion->prepare("SELECT p.imagen FROM productos p WHERE p.id_disponible = 1 ORDER BY RAND() LIMIT 1");
+        if ($fallStmt) {
+          $fallStmt->execute();
+          $crow = $fallStmt->get_result()->fetch_assoc();
+          $fallStmt->close();
+        }
+      }
+
+      $countsCat[$slug] = $totalCount;
+      if ($crow) {
+        $v = json_decode($crow['imagen'], true);
+        $imgsCat[$slug] = is_array($v) ? ($v['frente'] ?? null) : $crow['imagen'];
+      } else {
+        $imgsCat[$slug] = null;
+      }
     }
   }
   ?>
@@ -299,8 +362,14 @@
       <div class="row g-4 justify-content-center">
         <?php
         $cats = [
-          'nina' => ['label' => 'Niñas', 'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink', 'id' => 'cat-ninas'],
+          'peluches' => ['label' => 'Peluches', 'emoji' => '\uD83E\uDDF8', 'color' => '#F59E0B', 'bg' => 'bg-amber', 'id' => 'cat-peluches'],
+          'educativos' => ['label' => 'Educativos', 'emoji' => '\uD83E\uDDE9', 'color' => '#8B5CF6', 'bg' => 'bg-purple', 'id' => 'cat-educativos'],
+          'vehiculos' => ['label' => 'Vehículos', 'emoji' => '\uD83C\uDFCE', 'color' => '#EF4444', 'bg' => 'bg-red', 'id' => 'cat-vehiculos'],
+          'electronicos' => ['label' => 'Electrónicos', 'emoji' => '\uD83C\uDFAE', 'color' => '#6366F1', 'bg' => 'bg-indigo', 'id' => 'cat-electronicos'],
+          'munecas' => ['label' => 'Muñecas', 'emoji' => '\uD83E\uDE86', 'color' => '#D946EF', 'bg' => 'bg-fuchsia', 'id' => 'cat-munecas'],
+          'exterior' => ['label' => 'Exterior', 'emoji' => '\uD83D\uDEB2', 'color' => '#14B8A6', 'bg' => 'bg-teal', 'id' => 'cat-exterior'],
           'nino' => ['label' => 'Niños', 'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue', 'id' => 'cat-ninos'],
+          'nina' => ['label' => 'Niñas', 'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink', 'id' => 'cat-ninas'],
           'bebe' => ['label' => 'Bebés', 'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green', 'id' => 'cat-bebes'],
         ];
         foreach ($cats as $slug => $cat):
@@ -309,15 +378,15 @@
           ?>
           <div class="col-6 col-md-4 col-lg-3">
             <a href="categoria.php?c=<?= $slug ?>" class="category-card" id="<?= $cat['id'] ?>"
-              style="overflow:hidden; padding:0;">
+              style="overflow:hidden; padding:0; border-radius: 20px; transition: all 0.3s ease; display: block; text-decoration: none; background: #ffffff;">
               <div
-                style="height:160px; overflow:hidden; border-radius:18px 18px 0 0; background:#f3f4f6; display:flex; align-items:center; justify-content:center; position:relative;">
+                style="height:175px; overflow:hidden; border-radius:18px 18px 0 0; background: linear-gradient(135deg, <?= $cat['color'] ?>15 0%, #f9fafb 100%); display:flex; align-items:center; justify-content:center; position:relative; padding:14px;">
                 <?php if ($img): ?>
                   <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($cat['label']) ?>"
-                    style="width:100%; height:100%; object-fit:cover; transition:transform .35s ease;"
+                    style="max-width:100%; max-height:100%; object-fit:contain; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.09)); transition:transform .35s ease;"
                     class="cat-thumb-img">
                   <div
-                    style="position:absolute;inset:0;background:linear-gradient(to top,<?= $cat['color'] ?>44 0%,transparent 60%);">
+                    style="position:absolute;inset:0;background:linear-gradient(to top,<?= $cat['color'] ?>20 0%,transparent 60%);pointer-events:none;">
                   </div>
                 <?php else: ?>
                   <span style="font-size:3.5rem;"><?= json_decode('"' . $cat['emoji'] . '"') ?></span>
@@ -328,7 +397,7 @@
                   <?= htmlspecialchars($cat['label']) ?>
                 </h3>
                 <p style="font-size:.82rem; color:var(--text-light); margin:0;">
-                  <?= $count > 0 ? "+{$count} producto" . ($count !== 1 ? 's' : '') : '' ?>
+                  <?= $count > 0 ? "+{$count} producto" . ($count !== 1 ? 's' : '') : 'Explorar categoría' ?>
                 </p>
               </div>
             </a>
