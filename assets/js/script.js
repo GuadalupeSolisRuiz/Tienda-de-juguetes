@@ -652,4 +652,91 @@ document.addEventListener('DOMContentLoaded', function () {
     track.addEventListener('mouseleave', () => resetAutoPlay());
   }
 
+  // ── FILTRO Y ORDENAMIENTO POR PRECIO / NOMBRE EN CATEGORÍAS ──
+  const sortSelect = document.getElementById('sortPriceSelect');
+  const filterInput = document.getElementById('filterNameInput');
+  const productsRow = document.getElementById('productsRow');
+
+  if (productsRow) {
+    const applyFilterAndSort = () => {
+      const sortValue = sortSelect ? sortSelect.value : 'defecto';
+      const filterValue = filterInput ? filterInput.value.trim().toLowerCase() : '';
+      const noResultsMsg = document.getElementById('noResultsMsg');
+
+      const cols = Array.from(productsRow.querySelectorAll('.product-item-col'));
+      if (cols.length === 0) return;
+
+      let visibleCount = 0;
+
+      // 1. Filtrado instantáneo por nombre
+      cols.forEach(col => {
+        const name = (col.getAttribute('data-name') || '').toLowerCase();
+        if (!filterValue || name.includes(filterValue)) {
+          col.style.display = '';
+          visibleCount++;
+        } else {
+          col.style.display = 'none';
+        }
+      });
+
+      // Mostrar u ocultar mensaje si 0 productos coinciden con la búsqueda por nombre
+      if (noResultsMsg) {
+        if (visibleCount === 0) {
+          noResultsMsg.classList.remove('d-none');
+        } else {
+          noResultsMsg.classList.add('d-none');
+        }
+      }
+
+      // 2. Ordenamiento por precio, nombre o más recientes
+      cols.sort((a, b) => {
+        const priceA = parseFloat(a.getAttribute('data-price')) || 0;
+        const priceB = parseFloat(b.getAttribute('data-price')) || 0;
+        const nameA = (a.getAttribute('data-name') || '').toLowerCase();
+        const nameB = (b.getAttribute('data-name') || '').toLowerCase();
+        const idA = parseInt(a.getAttribute('data-id')) || 0;
+        const idB = parseInt(b.getAttribute('data-id')) || 0;
+
+        if (sortValue === 'precio_asc') {
+          return priceA - priceB;
+        } else if (sortValue === 'precio_desc') {
+          return priceB - priceA;
+        } else if (sortValue === 'nombre_asc') {
+          return nameA.localeCompare(nameB, 'es', { sensitivity: 'base' });
+        } else if (sortValue === 'nombre_desc') {
+          return nameB.localeCompare(nameA, 'es', { sensitivity: 'base' });
+        } else {
+          return idB - idA; // Por defecto: más recientes primero (id mayor primero)
+        }
+      });
+
+      // 3. Reordenar los elementos en el DOM inmediatamente
+      cols.forEach(col => productsRow.appendChild(col));
+
+      // 4. Actualizar la URL de forma silenciosa para sincronizar el estado
+      try {
+        const url = new URL(window.location.href);
+        if (sortValue === 'defecto' || !sortValue) {
+          url.searchParams.delete('sort');
+        } else {
+          url.searchParams.set('sort', sortValue);
+        }
+        window.history.replaceState(null, '', url.toString());
+      } catch (e) {}
+    };
+
+    // Registrar eventos para cambio de select y tipeo en el buscador
+    if (sortSelect) {
+      sortSelect.addEventListener('change', applyFilterAndSort);
+    }
+    if (filterInput) {
+      filterInput.value = ''; // Limpiar buscador al cambiar/cargar categoría
+      filterInput.addEventListener('input', applyFilterAndSort);
+      filterInput.addEventListener('keyup', applyFilterAndSort);
+    }
+
+    // Ejecutar inmediatamente al cargar la página
+    applyFilterAndSort();
+  }
+
 });

@@ -102,7 +102,19 @@ if (!array_key_exists($slug, $categoriasConfig)) {
     $cfg = $categoriasConfig[$slug];
 }
 
-// ── Consulta SQL para obtener los productos ──
+// ── Consulta SQL y Ordenamiento para obtener los productos ──
+$sort = strtolower(trim($_GET['sort'] ?? $_GET['orden'] ?? ''));
+$orderBySql = " ORDER BY p.id_productos DESC ";
+if ($sort === 'precio_asc') {
+    $orderBySql = " ORDER BY p.precio ASC, p.id_productos DESC ";
+} elseif ($sort === 'precio_desc') {
+    $orderBySql = " ORDER BY p.precio DESC, p.id_productos DESC ";
+} elseif ($sort === 'nombre_asc') {
+    $orderBySql = " ORDER BY p.nombre_producto ASC ";
+} elseif ($sort === 'nombre_desc') {
+    $orderBySql = " ORDER BY p.nombre_producto DESC ";
+}
+
 $productos = [];
 if ($conexion) {
     if ($slug === 'todos' || empty($slug)) {
@@ -113,7 +125,7 @@ if ($conexion) {
             FROM productos p
             LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
             WHERE p.id_disponible = 1
-            ORDER BY p.id_productos DESC
+            {$orderBySql}
         ";
         $stmt = $conexion->prepare($sql);
     } else {
@@ -139,7 +151,7 @@ if ($conexion) {
             FROM productos p
             LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
             WHERE p.id_disponible = 1 AND ({$whereClause})
-            ORDER BY p.id_productos DESC
+            {$orderBySql}
         ";
         
         $stmt = $conexion->prepare($sql);
@@ -177,7 +189,7 @@ if ($conexion) {
             FROM productos p
             LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
             WHERE p.id_disponible = 1
-            ORDER BY p.id_productos DESC
+            {$orderBySql}
         ");
         if ($qFallback) {
             $qFallback->execute();
@@ -202,6 +214,25 @@ if ($conexion) {
         }
     }
     $conexion->close();
+}
+
+// Asegurar ordenamiento en PHP como respaldo
+if ($sort === 'precio_asc') {
+    usort($productos, function ($a, $b) {
+        return $a['precio'] <=> $b['precio'];
+    });
+} elseif ($sort === 'precio_desc') {
+    usort($productos, function ($a, $b) {
+        return $b['precio'] <=> $a['precio'];
+    });
+} elseif ($sort === 'nombre_asc') {
+    usort($productos, function ($a, $b) {
+        return strcasecmp($a['nombre'], $b['nombre']);
+    });
+} elseif ($sort === 'nombre_desc') {
+    usort($productos, function ($a, $b) {
+        return strcasecmp($b['nombre'], $a['nombre']);
+    });
 }
 ?>
 <!DOCTYPE html>
@@ -346,7 +377,7 @@ if ($conexion) {
     <div class="container">
       <div class="pills-scroll">
         <?php foreach ($categoriasConfig as $cKey => $cItem): ?>
-          <a href="categoria.php?c=<?= $cKey ?>" class="pill-item <?= $slug === $cKey ? 'active' : '' ?>">
+          <a href="categoria.php?c=<?= $cKey ?><?= !empty($sort) ? '&sort=' . urlencode($sort) : '' ?>" class="pill-item <?= $slug === $cKey ? 'active' : '' ?>">
             <span><?= $cItem['emoji'] ?></span>
             <span><?= htmlspecialchars($cItem['label']) ?></span>
           </a>
@@ -367,19 +398,42 @@ if ($conexion) {
         </div>
       <?php endif; ?>
 
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <h2 style="font-family:'Fredoka One',cursive; font-size:1.5rem; color:var(--text); margin:0;">
-          <?= count($productos) ?> Juguete<?= count($productos) !== 1 ? 's' : '' ?> Disponible<?= count($productos) !== 1 ? 's' : '' ?>
-        </h2>
-        <span class="badge bg-white text-secondary border px-3 py-2 rounded-pill shadow-sm">
-          Filtro: <?= htmlspecialchars($cfg['label']) ?>
-        </span>
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4 p-3 bg-white rounded-4 shadow-sm border">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h2 style="font-family:'Fredoka One',cursive; font-size:1.4rem; color:var(--text); margin:0;">
+            <?= count($productos) ?> Juguete<?= count($productos) !== 1 ? 's' : '' ?> Disponible<?= count($productos) !== 1 ? 's' : '' ?>
+          </h2>
+          <span class="badge bg-white text-secondary border px-3 py-2 rounded-pill shadow-sm">
+            <?= $cfg['emoji'] ?> <?= htmlspecialchars($cfg['label']) ?>
+          </span>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto ms-md-0">
+          <!-- Búsqueda en vivo por Nombre -->
+          <div class="position-relative" style="min-width: 190px;">
+            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            <input type="text" id="filterNameInput" autocomplete="off" value="" class="form-control form-control-sm border shadow-sm rounded-pill ps-5 pe-3 py-2 fw-bold text-dark" placeholder="Buscar por nombre..." style="background-color: #fff;">
+          </div>
+          <!-- Selector de Ordenamiento -->
+          <div class="d-flex align-items-center gap-2">
+            <label for="sortPriceSelect" class="form-label mb-0 fw-bold text-secondary text-nowrap small d-none d-lg-inline">
+              <i class="bi bi-funnel-fill text-primary me-1"></i>Ordenar por:
+            </label>
+            <select id="sortPriceSelect" class="form-select form-select-sm border shadow-sm rounded-pill px-3 py-2 fw-bold text-dark" style="min-width: 210px; cursor: pointer; background-color: #fff;">
+              <option value="defecto" <?= $sort === '' || $sort === 'defecto' ? 'selected' : '' ?>>✨ Más recientes (Por defecto)</option>
+              <option value="precio_asc" <?= $sort === 'precio_asc' ? 'selected' : '' ?>>💲 Precio: De menor a mayor</option>
+              <option value="precio_desc" <?= $sort === 'precio_desc' ? 'selected' : '' ?>>🏷️ Precio: De mayor a menor</option>
+              <option value="nombre_asc" <?= $sort === 'nombre_asc' ? 'selected' : '' ?>>🔤 Nombre: De A a Z</option>
+              <option value="nombre_desc" <?= $sort === 'nombre_desc' ? 'selected' : '' ?>>🔤 Nombre: De Z a A</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <?php if (!empty($productos)): ?>
-        <div class="row g-4">
+        <div class="row g-4" id="productsRow" style="transition: opacity 0.2s ease;">
           <?php foreach ($productos as $producto): ?>
-            <div class="col-6 col-md-4 col-lg-3">
+            <div class="col-6 col-md-4 col-lg-3 product-item-col" data-price="<?= (float)$producto['precio'] ?>" data-id="<?= (int)$producto['id'] ?>" data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>">
               <div class="product-card"
                 id="product-<?= (int)$producto['id'] ?>"
                 data-id="<?= (int)$producto['id'] ?>"
@@ -413,8 +467,14 @@ if ($conexion) {
                   </div>
                 </div>
               </div>
-            </div>
           <?php endforeach; ?>
+
+          <!-- Mensaje cuando el filtro de búsqueda por nombre no coincide con ningún producto -->
+          <div id="noResultsMsg" class="col-12 text-center py-5 d-none">
+            <div class="display-6 mb-2">🔍</div>
+            <h4 class="fw-bold text-dark mb-1">No encontramos juguetes con ese nombre</h4>
+            <p class="text-muted small mb-0">Intenta buscar con otra palabra clave o limpia la búsqueda.</p>
+          </div>
         </div>
 
       <?php else: ?>
@@ -483,6 +543,6 @@ if ($conexion) {
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/cart.js"></script>
-  <script src="assets/js/script.js"></script>
+  <script src="assets/js/script.js?v=<?= time() ?>"></script>
 </body>
 </html>
