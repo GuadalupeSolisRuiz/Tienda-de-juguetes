@@ -190,8 +190,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (window.toyCart && product) {
         window.toyCart.add(product);
-        if (bsProductModal) bsProductModal.hide();
-        window.toyCart.open();
+        if (window.isUserLoggedIn) {
+          if (bsProductModal) bsProductModal.hide();
+          window.toyCart.open();
+        }
       }
     });
   }
@@ -585,7 +587,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (window.toyCart) {
         window.toyCart.add(product);
-        window.toyCart.open(); // Abrir el carrito automáticamente al agregar
+        if (window.isUserLoggedIn) {
+          window.toyCart.open();
+        }
       }
     });
   });

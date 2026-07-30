@@ -51,6 +51,7 @@ body {
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
+
 .navbar-toggler-bg:active,
 .navbar-toggler-bg:focus {
   transform: translateY(1px);
@@ -229,6 +230,7 @@ a.nav-link.nav-gestion-pill:hover,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -272,6 +274,7 @@ a.nav-link.nav-gestion-pill:hover,
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -354,13 +357,16 @@ a.nav-link.nav-gestion-pill:hover,
     opacity: 0;
     transform: scale(0.3);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.05);
   }
+
   70% {
     transform: scale(0.95);
   }
+
   100% {
     transform: scale(1);
   }
@@ -371,6 +377,7 @@ a.nav-link.nav-gestion-pill:hover,
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -381,6 +388,7 @@ a.nav-link.nav-gestion-pill:hover,
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -416,9 +424,12 @@ a.nav-link.nav-gestion-pill:hover,
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.4;
   }
@@ -490,7 +501,7 @@ a.nav-link.nav-gestion-pill:hover,
   }
 
   #mainNav .dropdown-menu.show,
-  #mainNav .dropdown.show > .dropdown-menu {
+  #mainNav .dropdown.show>.dropdown-menu {
     display: block !important;
   }
 
@@ -506,7 +517,7 @@ a.nav-link.nav-gestion-pill:hover,
   }
 
   /* Icons en el collapse */
-  #mainNav > .d-flex {
+  #mainNav>.d-flex {
     width: 100% !important;
     flex-direction: column !important;
     margin-top: 1rem !important;
@@ -546,13 +557,13 @@ a.nav-link.nav-gestion-pill:hover,
     min-width: 12rem !important;
     margin-top: 0 !important;
     border-radius: 14px !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12) !important;
-    border: 1px solid rgba(0,0,0,0.06) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
   }
 
-  #mainNav .dropdown:hover > .dropdown-menu,
+  #mainNav .dropdown:hover>.dropdown-menu,
   #mainNav .dropdown-menu.show,
-  #mainNav .dropdown.show > .dropdown-menu {
+  #mainNav .dropdown.show>.dropdown-menu {
     display: block !important;
   }
 }
@@ -1985,26 +1996,32 @@ input[type="date"].filled {
 
 /* Large screens (tablet landscape, desktop) */
 @media (max-width: 991.98px) {
+
   /* Index */
   .hero h1 {
     font-size: 2.4rem;
   }
+
   .hero-toys .toy-main {
     font-size: 9rem;
   }
+
   .hero-toys .toy-side1 {
     font-size: 3.5rem;
   }
+
   .hero-toys .toy-side2 {
     font-size: 3rem;
   }
+
   .hero-stats {
     gap: 24px;
   }
+
   .promo-banner h2 {
     font-size: 2rem;
   }
-  
+
   /* Shared */
   .footer-bar {
     padding: 20px 16px;
@@ -2014,9 +2031,11 @@ input[type="date"].filled {
   .hero-section {
     grid-template-columns: 1fr;
   }
+
   .hero-left {
     display: none;
   }
+
   .hero-right {
     padding: 32px 20px;
   }
@@ -2024,37 +2043,47 @@ input[type="date"].filled {
 
 /* Medium screens (tablet portrait) */
 @media (max-width: 767.98px) {
+
   /* Index */
   .hero {
     min-height: auto;
   }
+
   .hero h1 {
     font-size: 2rem;
   }
+
   .hero-toys {
     margin-top: 30px;
   }
+
   .hero-toys .toy-main {
     font-size: 7rem;
   }
+
   .hero-actions {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .hero-stats {
     flex-direction: column;
     gap: 12px;
     text-align: left;
   }
+
   .hero-stat {
     text-align: left;
   }
+
   .newsletter-form {
     flex-direction: column;
   }
+
   .promo-toys span {
     font-size: 4rem !important;
   }
+
   .footer-bottom {
     flex-direction: column;
     gap: 12px;
@@ -2064,11 +2093,12 @@ input[type="date"].filled {
 
 /* Small screens (mobiles) */
 @media (max-width: 575.98px) {
+
   /* Shared */
   .footer-item .footer-text strong {
     font-size: 0.78rem;
   }
-  
+
   /* Index */
   .hero h1 {
     font-size: 1.8rem;
@@ -2097,6 +2127,7 @@ input[type="date"].filled {
     opacity: 0;
     transform: scale(0.93) translateY(-12px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -2904,9 +2935,19 @@ input[type="date"].filled {
 }
 
 @keyframes couponSuccess {
-  0%   { transform: scale(0.9); opacity: 0; }
-  60%  { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .cart-summary-divider {
@@ -2997,7 +3038,7 @@ input[type="date"].filled {
   gap: 10px;
 }
 
-.trust-badge > i {
+.trust-badge>i {
   font-size: 1.2rem;
   color: var(--green);
   flex-shrink: 0;
@@ -3129,6 +3170,7 @@ input[type="date"].filled {
   .cart-summary-box {
     position: static;
   }
+
   .cart-page-title {
     font-size: 1.6rem;
   }
@@ -3138,18 +3180,22 @@ input[type="date"].filled {
   .cart-page {
     padding-bottom: 100px;
   }
+
   .cart-card {
     flex-wrap: wrap;
     padding: 14px;
     gap: 12px;
   }
+
   .cart-card-info {
     order: 1;
     flex: 1;
   }
+
   .cart-card-img {
     order: 0;
   }
+
   .cart-card-qty-block {
     order: 2;
     width: 100%;
@@ -3159,6 +3205,7 @@ input[type="date"].filled {
     padding-top: 10px;
     border-top: 1px solid var(--border);
   }
+
   .cart-card-side {
     order: 3;
     flex-direction: row;
@@ -3166,10 +3213,12 @@ input[type="date"].filled {
     justify-content: space-between;
     width: 100%;
   }
+
   .cart-page-header {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .cart-back-link {
     display: none;
   }
@@ -3182,9 +3231,11 @@ input[type="date"].filled {
     min-width: 64px;
     font-size: 2rem;
   }
+
   .cart-page-title {
     font-size: 1.4rem;
   }
+
   .order-success-card {
     padding: 36px 24px;
   }
@@ -3224,8 +3275,7 @@ input[type="date"].filled {
   border-color: rgba(124, 58, 237, 0.3) !important;
 }
 
-.product-image {
-}
+.product-image {}
 
 .btn-add-cart:active {
   color: #7C3AED !important;
@@ -3235,7 +3285,8 @@ input[type="date"].filled {
 }
 
 /* Form Control Inputs UI/UX */
-.form-control, .form-select {
+.form-control,
+.form-select {
   border-radius: 12px !important;
   border: 1.5px solid #E5E7EB !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
@@ -3267,7 +3318,7 @@ input[type="date"].filled {
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-  transform: translateY(-1px);
+transform: translateY(-1px);
 }
 
 /* ── Order Success Overlay ── */
@@ -3324,6 +3375,7 @@ input[type="date"].filled {
   .cart-summary-box {
     position: static;
   }
+
   .cart-page-title {
     font-size: 1.6rem;
   }
@@ -3333,18 +3385,22 @@ input[type="date"].filled {
   .cart-page {
     padding-bottom: 100px;
   }
+
   .cart-card {
     flex-wrap: wrap;
     padding: 14px;
     gap: 12px;
   }
+
   .cart-card-info {
     order: 1;
     flex: 1;
   }
+
   .cart-card-img {
     order: 0;
   }
+
   .cart-card-qty-block {
     order: 2;
     width: 100%;
@@ -3354,6 +3410,7 @@ input[type="date"].filled {
     padding-top: 10px;
     border-top: 1px solid var(--border);
   }
+
   .cart-card-side {
     order: 3;
     flex-direction: row;
@@ -3361,10 +3418,12 @@ input[type="date"].filled {
     justify-content: space-between;
     width: 100%;
   }
+
   .cart-page-header {
     flex-direction: column;
     align-items: flex-start;
   }
+
   .cart-back-link {
     display: none;
   }
@@ -3377,9 +3436,11 @@ input[type="date"].filled {
     min-width: 64px;
     font-size: 2rem;
   }
+
   .cart-page-title {
     font-size: 1.4rem;
   }
+
   .order-success-card {
     padding: 36px 24px;
   }
@@ -3419,9 +3480,6 @@ input[type="date"].filled {
   border-color: rgba(124, 58, 237, 0.3) !important;
 }
 
-.product-image {
-}
-
 .btn-add-cart:active {
   color: #7C3AED !important;
   background: #F5F3FF !important;
@@ -3430,7 +3488,8 @@ input[type="date"].filled {
 }
 
 /* Form Control Inputs UI/UX */
-.form-control, .form-select {
+.form-control,
+.form-select {
   border-radius: 12px !important;
   border: 1.5px solid #E5E7EB !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
@@ -3467,7 +3526,8 @@ input[type="date"].filled {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06) !important;
 }
 
-.table td, .table th {
+.table td,
+.table th {
   border: none !important;
   padding: 14px 18px !important;
   vertical-align: middle !important;

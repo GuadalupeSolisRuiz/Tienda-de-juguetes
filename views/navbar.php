@@ -23,6 +23,9 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
   unset($_SESSION['mostrar_bienvenida_reactivacion']);
 }
 ?>
+<script>
+  window.isUserLoggedIn = <?= isset($_SESSION['usuario_id']) ? 'true' : 'false' ?>;
+</script>
 <!-- ── NAVBAR ── -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
   <div class="container-fluid px-4" style="background-color: #ffffff;">

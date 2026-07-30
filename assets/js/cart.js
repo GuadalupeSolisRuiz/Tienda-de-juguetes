@@ -20,6 +20,31 @@ class ToyCart {
   // ── CRUD ──────────────────────────────────────────
 
   async add(product) {
+    // 1. Verificar si hay una sesión iniciada
+    if (!window.isUserLoggedIn) {
+      // Si el modal de detalles del producto está abierto, cerrarlo
+      const productModalEl = document.getElementById('productModal');
+      if (productModalEl && window.bootstrap) {
+        const bsProductModal = window.bootstrap.Modal.getInstance(productModalEl);
+        if (bsProductModal) bsProductModal.hide();
+      }
+
+      // Abrir el modal de inicio de sesión
+      const loginModalEl = document.getElementById('loginModal');
+      if (loginModalEl && window.bootstrap) {
+        const bsLoginModal = window.bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        bsLoginModal.show();
+
+        const loginAlert = document.getElementById('loginAlert');
+        if (loginAlert) {
+          loginAlert.className = 'alert alert-warning mb-3';
+          loginAlert.innerHTML = '🔒 <strong>Inicia sesión</strong> para agregar productos a tu carrito de compras.';
+          loginAlert.style.display = 'block';
+        }
+      }
+      return;
+    }
+
     const productId = product.id;
     const stockOk = await this._syncStock(productId, 'decrease', 1);
 
@@ -214,6 +239,22 @@ class ToyCart {
   }
 
   open() {
+    if (!window.isUserLoggedIn) {
+      this.close();
+      const loginModalEl = document.getElementById('loginModal');
+      if (loginModalEl && window.bootstrap) {
+        const bsLoginModal = window.bootstrap.Modal.getOrCreateInstance(loginModalEl);
+        bsLoginModal.show();
+
+        const loginAlert = document.getElementById('loginAlert');
+        if (loginAlert) {
+          loginAlert.className = 'alert alert-warning mb-3';
+          loginAlert.innerHTML = '🔒 <strong>Inicia sesión</strong> para acceder a tu carrito de compras.';
+          loginAlert.style.display = 'block';
+        }
+      }
+      return;
+    }
     document.getElementById('cartDrawer')?.classList.add('open');
     document.getElementById('cartOverlay')?.classList.add('open');
     document.body.style.overflow = 'hidden';
