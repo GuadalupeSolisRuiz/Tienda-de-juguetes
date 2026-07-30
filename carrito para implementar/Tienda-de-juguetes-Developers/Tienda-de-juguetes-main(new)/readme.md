@@ -1,0 +1,112 @@
+# 🧸 Nova Toys
+
+![Estado del proyecto](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
+![Licencia](https://img.shields.io/badge/licencia-MIT-blue)
+![Versión](https://img.shields.io/badge/versión-1.0.0-green)
+
+> Plataforma de e-commerce para la venta de juguetes, con catálogo interactivo, carrito de compras y panel de administración.
+
+---
+
+## 📖 Descripción
+
+**Nova Toys** es una aplicación web de comercio electrónico especializada en juguetes para niños menores de 10 años. Permite a los clientes explorar un catálogo completo, filtrar productos por categoría y edad, agregar artículos al carrito y realizar compras de manera segura. Incluye además un panel administrativo para gestionar inventario, pedidos y usuarios.
+
+---
+
+## 🧸 Vistas
+
+<p align="center">
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123522.png" />
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123541.png" />
+        <img height="300px" src="assets/img/Captura de pantalla 2026-06-25 123559.png" />
+</p>
+
+---
+
+## Instalación paso a paso
+
+### 1. Instalar XAMPP
+Descarga e instala la última versión de XAMPP desde el siguiente enlace:
+
+🔗 https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.0.30/xampp-windows-x64-8.0.30-0-VS16-installer.exe/download
+
+### 2. Iniciar los servicios
+Abre el panel de control de XAMPP y activa los servicios:
+
+- Apache
+- MySQL
+
+### 3. Clonar o descargar el proyecto
+Obtén el código fuente desde el repositorio de GitHub:
+
+```bash
+git clone https://github.com/GuadalupeSolisRuiz/Tienda-de-juguetes.git
+```
+
+O descárgalo como archivo ZIP y extráelo.
+
+### 4. Copiar la carpeta al directorio de XAMPP
+Coloca la carpeta del proyecto dentro del directorio:
+
+```text
+C:\xampp\htdocs\
+```
+
+La estructura deberá quedar similar a:
+
+```text
+C:\xampp\htdocs\Tienda-de-juguetes
+```
+
+### 5. Ejecutar la aplicación
+Con Apache y MySQL en ejecución, abre tu navegador y accede a:
+
+```text
+http://localhost/Tienda-de-juguetes
+```
+
+Si la instalación se realizó correctamente, la página se mostrará funcionando en tu entorno local.
+
+---
+
+## ✨ Características
+
+- 🔍 **Catálogo con búsqueda y filtros** — por categoría, rango de precios y edad recomendada
+- 🛒 **Carrito de compras** — con persistencia de sesión
+- 👤 **Autenticación de usuarios** — registro, inicio de sesión y perfil
+- 📦 **Seguimiento de pedidos** — historial y estado en tiempo real
+- 🛠️ **Panel de administración** — gestión de productos, categorías y órdenes
+- 📱 **Diseño responsivo** — compatible con dispositivos móviles y escritorio
+- ⭐ **Sistema de reseñas** — calificaciones y comentarios por producto
+
+---
+
+## 🛠️ Tecnologías
+
+| Capa | Tecnología |
+|------|------------|
+| Frontend | HTML 5, Javascript |
+| Estilos | Bootstrap, CSS3 |
+| Backend | XAMPP, PHP 8 |
+| Base de datos | PhpMyAdmin |
+| Almacenamiento | Local |
+
+---
+
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Consulta el archivo [`LICENSE`](./LICENSE) para más información.
+
+---
+
+## 📬 Contacto
+
+**Desarrollador** — [@alexglez13](https://github.com/alexglez13)
+
+🔗 Repositorio: [https://github.com/alexglez13/Tienda-de-juguetes](https://github.com/alexglez13/Tienda-de-juguetes)
+
+---
+
+<p align="center">Hecho con ❤️</p>

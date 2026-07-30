@@ -9,91 +9,6 @@
     content="Tienda de Juguetes — Descubre los mejores juguetes para niños y niñas. Peluches, educativos, electrónicos y más con envío a todo el país." />
   <title>Tienda de Juguetes — Inicio</title>
   <?php include "include/conect.php"; ?>
-  <?php
-  $productos = [];
-  if ($conexion) {
-    $nombre_base = "Oso de peluche";
-    $descripcion_base = "Peluche ultra suave de 60cm. Perfecto para abrazar.";
-    $precio_base = 459.00;
-    $stock_base = 12;
-    $imagenes_json = json_encode([
-      "frente" => "Juguetes/osof.png",
-      "izquierda" => "Juguetes/osoi.png",
-      "derecha" => "Juguetes/osod.png"
-    ], JSON_UNESCAPED_SLASHES);
-
-    if ($check_stmt = $conexion->prepare("SELECT id_productos FROM productos WHERE nombre_producto = ?")) {
-      $check_stmt->bind_param("s", $nombre_base);
-      $check_stmt->execute();
-      $check_result = $check_stmt->get_result();
-      if ($check_result->num_rows === 0) {
-        if ($insert_stmt = $conexion->prepare("INSERT INTO productos (nombre_producto, descripcion, precio, stock, imagen, id_categoria, id_disponible) VALUES (?, ?, ?, ?, ?, NULL, 1)")) {
-          $insert_stmt->bind_param("ssdis", $nombre_base, $descripcion_base, $precio_base, $stock_base, $imagenes_json);
-          $insert_stmt->execute();
-          $insert_stmt->close();
-        }
-      }
-      $check_stmt->close();
-    }
-
-    if ($select_stmt = $conexion->prepare("
-      SELECT p.id_productos, p.nombre_producto, p.descripcion, p.precio, p.stock, p.imagen,
-             COALESCE(c.nombre_categoria, 'Sin categoría') AS nombre_categoria
-      FROM productos p
-      LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
-      ORDER BY p.id_productos DESC
-    ")) {
-      $select_stmt->execute();
-      $select_result = $select_stmt->get_result();
-      while ($row = $select_result->fetch_assoc()) {
-        $vistas = json_decode($row["imagen"], true);
-        if (!is_array($vistas)) {
-          $vistas = ["frente" => $row["imagen"], "izquierda" => $row["imagen"], "derecha" => $row["imagen"]];
-        }
-
-        $productos[] = [
-          "id"         => (int) $row["id_productos"],
-          "nombre"     => $row["nombre_producto"],
-          "descripcion" => $row["descripcion"],
-          "precio"     => (float) $row["precio"],
-          "stock"      => (int) $row["stock"],
-          "categoria"  => $row["nombre_categoria"],
-          "vistas"     => $vistas
-        ];
-      }
-      $select_stmt->close();
-    }
-
-    // ── Imagen aleatoria por categoría para la sección "Explora por categoría" ──
-    $imgsCat = ['nina' => null, 'nino' => null, 'bebe' => null];
-    $countsCat = ['nina' => 0, 'nino' => 0, 'bebe' => 0];
-    $mapCat = ['Niña' => 'nina', 'Niño' => 'nino', 'Bebé' => 'bebe'];
-    foreach ($mapCat as $nombre_db => $slug) {
-      $cq = $conexion->prepare("
-        SELECT p.imagen, COUNT(*) OVER() AS total
-        FROM productos p
-        INNER JOIN categoria c ON p.id_categoria = c.id_categoria
-        WHERE c.nombre_categoria = ? AND p.id_disponible = 1
-        ORDER BY RAND() LIMIT 1
-      ");
-      $cq->bind_param('s', $nombre_db);
-      $cq->execute();
-      $crow = $cq->get_result()->fetch_assoc();
-      $cq->close();
-      if ($crow) {
-        $v = json_decode($crow['imagen'], true);
-        $imgsCat[$slug] = is_array($v) ? ($v['frente'] ?? null) : $crow['imagen'];
-      }
-      // count
-      $ccount = $conexion->prepare("SELECT COUNT(*) AS n FROM productos p INNER JOIN categoria c ON p.id_categoria=c.id_categoria WHERE c.nombre_categoria=? AND p.id_disponible=1");
-      $ccount->bind_param('s', $nombre_db);
-      $ccount->execute();
-      $crow2 = $ccount->get_result()->fetch_assoc();
-      $ccount->close();
-      $countsCat[$slug] = (int)($crow2['n'] ?? 0);
-    }
-  }
-  ?>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap"
@@ -216,46 +131,55 @@
       <div class="section-header">
         <span class="section-badge purple"><i class="bi bi-grid-fill"></i> Categorías</span>
         <h2>Explora por categoría</h2>
-        <p>Encuentra el juguete perfecto navegando por nuestras categorías principales.</p>
+        <p>Encuentra el juguete perfecto navegando por nuestras categorías más populares.</p>
       </div>
 
-      <div class="row g-4 justify-content-center">
-        <?php
-        $cats = [
-          'nina' => ['label' => 'Niñas',  'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink',   'id' => 'cat-ninas'],
-          'nino' => ['label' => 'Niños',  'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue',   'id' => 'cat-ninos'],
-          'bebe' => ['label' => 'Bebés',  'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green',  'id' => 'cat-bebes'],
-        ];
-        foreach ($cats as $slug => $cat):
-          $img   = $imgsCat[$slug] ?? null;
-          $count = $countsCat[$slug] ?? 0;
-        ?>
-        <div class="col-6 col-md-4 col-lg-3">
-          <a href="categoria.php?c=<?= $slug ?>" class="category-card" id="<?= $cat['id'] ?>" style="overflow:hidden; padding:0;">
-            <div style="height:160px; overflow:hidden; border-radius:18px 18px 0 0; background:#f3f4f6; display:flex; align-items:center; justify-content:center; position:relative;">
-              <?php if ($img): ?>
-                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($cat['label']) ?>" style="width:100%; height:100%; object-fit:cover; transition:transform .35s ease;" class="cat-thumb-img">
-                <div style="position:absolute;inset:0;background:linear-gradient(to top,<?= $cat['color'] ?>44 0%,transparent 60%);"></div>
-              <?php else: ?>
-                <span style="font-size:3.5rem;"><?= json_decode('"'.$cat['emoji'].'"') ?></span>
-              <?php endif; ?>
-            </div>
-            <div style="padding:16px 20px 20px;">
-              <h3 style="font-family:'Fredoka One',cursive; font-size:1.25rem; color:var(--text); margin-bottom:4px;"><?= htmlspecialchars($cat['label']) ?></h3>
-              <p style="font-size:.82rem; color:var(--text-light); margin:0;">
-                <?= $count > 0 ? "+{$count} producto" . ($count !== 1 ? 's' : '') : 'Próximamente' ?>
-              </p>
-            </div>
+      <div class="row g-4">
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-peluches">
+            <div class="category-icon bg-pink">🧸</div>
+            <h3>Peluches</h3>
+            <p>+320 productos</p>
           </a>
         </div>
-        <?php endforeach; ?>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-educativos">
+            <div class="category-icon bg-blue">🧩</div>
+            <h3>Educativos</h3>
+            <p>+280 productos</p>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-vehiculos">
+            <div class="category-icon bg-red">🚗</div>
+            <h3>Vehículos</h3>
+            <p>+190 productos</p>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-electronicos">
+            <div class="category-icon bg-purple">🎮</div>
+            <h3>Electrónicos</h3>
+            <p>+150 productos</p>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-munecas">
+            <div class="category-icon bg-yellow">👸</div>
+            <h3>Muñecas</h3>
+            <p>+260 productos</p>
+          </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="#" class="category-card" id="cat-exterior">
+            <div class="category-icon bg-green">⚽</div>
+            <h3>Exterior</h3>
+            <p>+140 productos</p>
+          </a>
+        </div>
       </div>
     </div>
   </section>
-
-  <style>
-    .category-card:hover .cat-thumb-img { transform: scale(1.07); }
-  </style>
 
 
   <!-- ── FEATURED PRODUCTS ── -->
@@ -268,55 +192,230 @@
       </div>
 
       <div class="row g-4">
-        <?php if (!empty($productos)): ?>
-          <?php foreach ($productos as $producto): ?>
-            <div class="col-6 col-lg-3">
-              <div class="product-card"
-                id="product-<?= (int) $producto['id'] ?>"
-                data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
-                data-price="<?= number_format($producto['precio'], 0, ',', '.') ?>"
-                data-stock="<?= (int) $producto['stock'] ?>"
-                data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
-                data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
-                role="button"
-                tabindex="0">
-                <div class="product-image">
-                  <span class="product-badge new">Nuevo</span>
-                  <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
-                  <img
-                    src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
-                    alt="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                    class="product-visual"
-                    data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                    data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'>
-                  <div class="product-card-hint">Toca para ver más</div>
-                </div>
-                <div class="product-info">
-                  <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
-                  <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
-                  <p class="description"><?= htmlspecialchars($producto['descripcion']) ?></p>
-                  <div class="product-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <span>(128)</span>
-                  </div>
-                  <div class="product-footer">
-                    <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
-                    <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
-                  </div>
-                </div>
+
+        <!-- Product 1 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-1">
+            <div class="product-image">
+              <span class="product-badge new">Nuevo</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🧸</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Peluches</span>
+              <h3>Osito Cariñoso XL</h3>
+              <p class="description">Peluche ultra suave de 60cm. Perfecto para abrazar.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <span>(128)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$459</span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
               </div>
             </div>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <div class="col-12">
-            <div class="alert alert-info">No hay productos registrados en la base de datos todavía.</div>
           </div>
-        <?php endif; ?>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-2">
+            <div class="product-image">
+              <span class="product-badge sale">-30%</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🚗</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Vehículos</span>
+              <h3>Auto de Carreras RC</h3>
+              <p class="description">Control remoto con luces LED y sonidos reales.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+                <span>(95)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$699 <span class="old">$999</span></span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-3">
+            <div class="product-image">
+              <span class="product-badge popular">Popular</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🧩</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Educativos</span>
+              <h3>Rompecabezas 3D</h3>
+              <p class="description">500 piezas para armar un castillo medieval.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <span>(203)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$349</span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-4">
+            <div class="product-image">
+              <span class="product-badge new">Nuevo</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🎮</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Electrónicos</span>
+              <h3>Consola Retro Mini</h3>
+              <p class="description">200 juegos clásicos incluidos. Conecta a tu TV.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star"></i>
+                <span>(67)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$899</span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-5">
+            <div class="product-image">
+              <span class="product-badge sale">-20%</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">👸</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Muñecas</span>
+              <h3>Princesa Encantada</h3>
+              <p class="description">Muñeca articulada con vestido brillante y accesorios.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <span>(156)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$399 <span class="old">$499</span></span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-6">
+            <div class="product-image">
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🎨</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Creativos</span>
+              <h3>Kit de Arte Completo</h3>
+              <p class="description">150 piezas: colores, pinceles, acuarelas y más.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+                <span>(89)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$279</span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 7 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-7">
+            <div class="product-image">
+              <span class="product-badge popular">Popular</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">⚽</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Exterior</span>
+              <h3>Balón Profesional</h3>
+              <p class="description">Tamaño oficial, resistente a todo terreno.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <span>(312)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$249</span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 8 -->
+        <div class="col-6 col-lg-3">
+          <div class="product-card" id="product-8">
+            <div class="product-image">
+              <span class="product-badge sale">-15%</span>
+              <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+              <span class="emoji">🚀</span>
+            </div>
+            <div class="product-info">
+              <span class="product-category-tag">Educativos</span>
+              <h3>Cohete Espacial STEM</h3>
+              <p class="description">Kit de construcción con lanzamiento real de agua.</p>
+              <div class="product-rating">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star"></i>
+                <span>(74)</span>
+              </div>
+              <div class="product-footer">
+                <span class="product-price">$549 <span class="old">$649</span></span>
+                <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- View all button -->
@@ -482,8 +581,8 @@
           <a class="d-flex align-items-center gap-2 text-decoration-none mb-3 footer-brand" href="index.php">
             <span class="logo-icon">🐻</span>
             <span class="logo-text">
-              <span class="logo-top">TOYS</span>
-              <span class="logo-bottom">NOVA</span>
+              <span class="logo-top">Tienda de</span>
+              <span class="logo-bottom">JUGUETES</span>
             </span>
           </a>
           <p style="font-size: 0.82rem; color: #9CA3AF; line-height: 1.6;">
@@ -533,8 +632,8 @@
         <div class="col-lg-3 col-md-6 col-6">
           <h5>Contacto</h5>
           <ul>
-            <li><a href="mailto:hola@toysnova.com"><i
-                  class="bi bi-envelope me-2"></i>hola@toysnova.com</a></li>
+            <li><a href="mailto:hola@tiendadejuguetes.com"><i
+                  class="bi bi-envelope me-2"></i>hola@tiendadejuguetes.com</a></li>
             <li><a href="tel:+521234567890"><i class="bi bi-telephone me-2"></i>(123) 456-7890</a></li>
             <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Ciudad de México, MX</a></li>
           </ul>
@@ -544,7 +643,7 @@
 
       <div class="footer-bottom">
         <p>© 2026 Tienda de Juguetes. Todos los derechos reservados.</p>
-        <!-- <div class="footer-payment">
+        <div class="footer-payment">
           <span>Visa</span>
           <span>Mastercard</span>
           <span>PayPal</span>
@@ -552,48 +651,13 @@
         </div>
       </div>
     </div>
-  </footer> --> 
-  <!-- se comento el metodo de pago -->
+  </footer>
 
-
-  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content product-modal-content">
-        <button type="button" class="btn-close product-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        <div class="row g-0">
-          <div class="col-lg-6">
-            <div class="product-modal-image-wrap">
-              <img id="modalProductImage" src="" alt="" class="product-modal-image">
-              <div class="modal-nav-arrows" role="group" aria-label="Cambiar vista del juguete">
-                <button class="modal-arrow modal-arrow-left" id="modalArrowLeft" aria-label="Vista anterior"><i class="bi bi-chevron-left"></i></button>
-                <button class="modal-arrow modal-arrow-right" id="modalArrowRight" aria-label="Vista siguiente"><i class="bi bi-chevron-right"></i></button>
-              </div>
-              <div class="modal-view-dots" aria-hidden="true">
-                <span class="modal-view-dot" data-dot="izquierda"></span>
-                <span class="modal-view-dot active" data-dot="frente"></span>
-                <span class="modal-view-dot" data-dot="derecha"></span>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="product-modal-body">
-              <span class="product-category-tag" id="modalProductCategory"></span>
-              <h3 id="productModalLabel"></h3>
-              <p id="modalProductDescription"></p>
-              <div class="product-modal-meta">
-                <div class="product-modal-price" id="modalProductPrice"></div>
-                <div class="product-modal-stock" id="modalProductStock"></div>
-              </div>
-              <p class="product-modal-help">Haz clic en las flechas para cambiar entre las vistas del producto.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Bootstrap 5 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <!-- Persistent Cart + Push Notifications -->
+  <script src="assets/js/cart.js"></script>
   <!-- General App Scripts -->
   <script src="assets/js/script.js"></script>
 </body>

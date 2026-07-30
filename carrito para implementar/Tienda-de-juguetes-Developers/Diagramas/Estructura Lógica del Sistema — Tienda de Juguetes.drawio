@@ -1,0 +1,40 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="Ple-tviIWgEPZOEGlqGI">
+    <mxGraphModel dx="2571" dy="1351" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="76dAHC3fHzopNnRVF8-L-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Estructura Lógica del Sistema — Tienda de Juguetes&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="430" x="210" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-9" edge="1" parent="1" source="76dAHC3fHzopNnRVF8-L-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="76dAHC3fHzopNnRVF8-L-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Interfaz Web&lt;div&gt;HTML 5, CSS3 y Bootstrap 5&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="500" x="170" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="" vertex="1">
+          <mxGeometry height="830" width="500" x="170" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Logica del Sistema&lt;div&gt;Javascript&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="170" x="335" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Módulo de Autenticación&lt;div&gt;• Login&lt;/div&gt;&lt;div&gt;• Registro&lt;/div&gt;&lt;div&gt;• Validaciones&lt;/div&gt;&lt;div&gt;• Control de sesiones&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="300" x="270" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="&lt;div&gt;Módulo de Productos&lt;/div&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;Catálogo&lt;/li&gt;&lt;li&gt;Categorías&lt;/li&gt;&lt;li&gt;Buscador&lt;/li&gt;&lt;li&gt;CRUD de productos&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="250" x="295" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Módulo de Compras&lt;/div&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;Carrito&lt;/li&gt;&lt;li&gt;Agregar productos&lt;/li&gt;&lt;li&gt;Eliminar productos&lt;/li&gt;&lt;li&gt;Procesar compra&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="190" x="330" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Módulo Administrativo&lt;/div&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;Gestión de usuarios&lt;/li&gt;&lt;li&gt;Gestión de productos&lt;/li&gt;&lt;li&gt;Panel administrador&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="190" x="330" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="76dAHC3fHzopNnRVF8-L-10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Módulo de Seguridad&lt;/div&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;Validación de formularios&lt;/li&gt;&lt;li&gt;Protección de sesiones&lt;/li&gt;&lt;li&gt;Restricción por roles&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="190" x="330" y="790" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

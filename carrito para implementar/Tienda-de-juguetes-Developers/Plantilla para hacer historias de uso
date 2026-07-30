@@ -1,0 +1,54 @@
+## 📌 DATOS GENERALES
+| Campo | Valor |
+|-------|-------|
+| **Proyecto** | PetGuard WebApp |
+| **Departamento solicitante** | [Ej: Producto, UX, Desarrollo] |
+| **Nombre de la historia** | [Título descriptivo] |
+| **Fecha** | [AAAA-MM-DD] |
+| **Analista/PO** | [@usuario-github] |
+
+## 🎯 PRIORIDAD Y RIESGO
+- **Prioridad en negocio**: 🔴 Alta / 🟡 Media / 🟢 Baja
+- **Riesgo en desarrollo**: 🔴 Alto / 🟡 Medio / 🟢 Bajo
+- **Desarrollador responsable**: [@usuario-github]
+- **Áreas involucradas**: [Frontend, Backend, UX, QA, etc.]
+
+## 👤 COMO [ROL]
+
+## ✅ CRITERIOS DE ACEPTACIÓN
+- [ ] Criterio 1: [Descripción medible y testeable]
+- [ ] Criterio 2: [Descripción medible y testeable]
+- [ ] Criterio 3: [Descripción medible y testeable]
+
+## 📋 TAREAS TÉCNICAS
+| Tarea | Estimación (SP) | Asignado | Estado |
+|-------|----------------|----------|--------|
+| [Ej: Crear endpoint POST /api/users] | 3 | @dev | ⏳ Pendiente |
+| [Ej: Diseñar UI de perfil] | 2 | @ux | ⏳ Pendiente |
+| [Ej: Validaciones de formulario] | 2 | @qa | ⏳ Pendiente |
+
+## 🔗 DEPENDENCIAS
+- Depende de US-XXX: [Título de historia previa]
+- Bloquea a US-YYY: [Título de historia siguiente]
+
+## 📎 ANEXOS
+- [ ] Bocetos de interfaz: [Link a Figma/Draw.io o archivo en `/docs/designs`]
+- [ ] Archivo adjunto: [Subir archivo si es necesario]
+- **Observaciones**: [Notas adicionales]
+
+## 🎯 OBJETIVO GENERAL DEL PROYECTO
+> Aplicación webapp progresiva para gestión de adopción responsable de animales, facilitando la conexión entre adoptantes y refugios con trazabilidad, educación y bienestar animal como pilares.
+
+---
+### ✅ APROBACIONES
+| Rol | Nombre | Firma (GitHub) | Fecha |
+|-----|--------|----------------|-------|
+| Analista/PO | | @usuario | |
+| Líder de Proyecto | | @usuario | |
+| Sprint | `Sprint #` | | |
+
+> 💡 **Instrucciones**: 
+> 1. Completa todos los campos antes de asignar
+> 2. Vincula esta Issue al Project "PetGuard - Sprint Board"
+> 3. Asigna labels: `epic:XXX`, `priority:PX`, `role:XXX`, `sprint:X`
+> 4. Mueve a columna "Ready" cuando cumpla Definition of Ready

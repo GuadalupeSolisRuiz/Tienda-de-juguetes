@@ -44,10 +44,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // 1. Desplazamiento suave para enlaces de anclaje (Smooth Scroll)
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const href = this.getAttribute('href');
+      if (href && href !== '#' && href.length > 1) {
+        try {
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } catch (err) {}
       }
     });
   });
@@ -141,6 +146,8 @@ document.addEventListener('DOMContentLoaded', function () {
       modalDescription.textContent = card.dataset.description || '';
       modalPrice.textContent = `$${card.dataset.price || '0'}`;
       modalStock.textContent = `Stock disponible: ${card.dataset.stock || '0'}`;
+      const modalCategory = document.getElementById('modalProductCategory');
+      if (modalCategory) modalCategory.textContent = card.dataset.categoria || '';
       setModalView(0);
       openProductModal();
     });
@@ -505,5 +512,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // 9. Botón de búsqueda en el Navbar
+  const btnSearch = document.getElementById('btn-search');
+  if (btnSearch) {
+    btnSearch.addEventListener('click', function (e) {
+      e.preventDefault();
+      const term = prompt('¿Qué juguete estás buscando?');
+      if (term && term.trim() !== '') {
+        window.location.href = 'categoria.php?c=' + encodeURIComponent(term.trim());
+      }
+    });
+  }
+
+  // 10. Botón de Carrito en el Navbar
+  const btnCart = document.getElementById('btn-cart');
+  if (btnCart) {
+    btnCart.addEventListener('click', function (e) {
+      e.preventDefault();
+      const cartCountEl = document.querySelector('.cart-count');
+      const count = cartCountEl ? parseInt(cartCountEl.textContent) || 0 : 0;
+      if (count > 0) {
+        alert(`🛒 Tienes ${count} juguete(s) agregados en tu carrito.`);
+      } else {
+        alert('🛒 Tu carrito está vacío. Haz clic en el botón "+" de cualquier juguete para agregarlo.');
+      }
+    });
+  }
 
 });

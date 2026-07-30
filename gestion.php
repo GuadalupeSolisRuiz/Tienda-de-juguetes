@@ -9,6 +9,85 @@ if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['usuario_rol']) || !in_a
 
 include 'include/conect.php';
 
+/**
+ * Convierte una imagen subida a formato WebP y la guarda en el destino indicado.
+ * Requiere la extensión GD de PHP con soporte WebP.
+ *
+ * @param string $tmp_name   Ruta temporal del archivo subido.
+ * @param string $destino    Ruta completa donde se guardará el archivo .webp.
+ * @param int    $calidad    Calidad WebP (0-100). Por defecto 82.
+ * @param string &$errorMsg  Mensaje de error en caso de fallo.
+ * @return bool              true si la conversión y guardado fueron exitosos.
+ */
+function convertirAWebP(string $tmp_name, string $destino, int $calidad = 82, string &$errorMsg = ''): bool {
+    if (!function_exists('imagewebp')) {
+        $errorMsg = 'La función imagewebp no está disponible. Verifica que GD tenga soporte WebP.';
+        return false;
+    }
+
+    $info = @getimagesize($tmp_name);
+    if (!$info) {
+        $errorMsg = 'No se pudo leer la imagen subida.';
+        return false;
+    }
+
+    $mime = $info['mime'];
+
+    switch ($mime) {
+        case 'image/jpeg':
+            $img = @imagecreatefromjpeg($tmp_name);
+            break;
+        case 'image/png':
+            $img = @imagecreatefrompng($tmp_name);
+            break;
+        case 'image/gif':
+            $img = @imagecreatefromgif($tmp_name);
+            break;
+        case 'image/webp':
+            $img = @imagecreatefromwebp($tmp_name);
+            break;
+        default:
+            $errorMsg = "Tipo de imagen no soportado: {$mime}. Usa JPG, PNG, GIF o WebP.";
+            return false;
+    }
+
+    if (!$img) {
+        $errorMsg = "No se pudo cargar la imagen (MIME: {$mime}). Archivo corrupto o formato inválido.";
+        return false;
+    }
+
+    // Preservar transparencia para PNG y GIF
+    if ($mime === 'image/png' || $mime === 'image/gif') {
+        imagepalettetotruecolor($img);
+        imagealphablending($img, false);
+        imagesavealpha($img, true);
+    }
+
+    // Asegurarse de que el directorio destino exista y tenga permisos
+    $dir = dirname($destino);
+    if (!is_dir($dir)) {
+        mkdir($dir, 0777, true);
+    }
+
+    if (!is_writable($dir)) {
+        imagedestroy($img);
+        $errorMsg = "El directorio destino no tiene permisos de escritura: {$dir}";
+        return false;
+    }
+
+    error_clear_last();
+    $resultado = @imagewebp($img, $destino, $calidad);
+    imagedestroy($img);
+
+    if (!$resultado) {
+        $lastError = error_get_last();
+        $errorMsg  = 'imagewebp() falló' . ($lastError ? ': ' . $lastError['message'] : '.');
+        return false;
+    }
+
+    return true;
+}
+
 $mensaje = '';
 $tipoMensaje = '';
 
@@ -29,17 +108,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $rutas = [];
     $vistas = ['frente', 'izquierda', 'derecha'];
 
+    $erroresWebP = [];
     foreach ($vistas as $vista) {
         if (isset($_FILES["img_$vista"]) && $_FILES["img_$vista"]['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES["img_$vista"]['tmp_name'];
-            $ext = pathinfo($_FILES["img_$vista"]['name'], PATHINFO_EXTENSION);
-            
-            $filename = "prod_" . time() . "_{$vista}_" . rand(100, 999) . "." . $ext;
-            $destino = $target_dir . $filename;
 
-            if (move_uploaded_file($tmp_name, $destino)) {
+            $filename = "prod_" . time() . "_{$vista}_" . rand(100, 999) . ".webp";
+            $destino  = $target_dir . $filename;
+            $errWebP  = '';
+
+            if (convertirAWebP($tmp_name, $destino, 82, $errWebP)) {
                 $rutas[$vista] = "Juguetes/" . $filename;
             } else {
+                $erroresWebP[] = "Vista '{$vista}': {$errWebP}";
                 $rutas[$vista] = "Juguetes/default.png";
             }
         } else {
@@ -53,8 +134,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->bind_param("ssdisi", $nombre, $descripcion, $precio, $stock, $imagenes_json, $categoria);
 
     if ($stmt->execute()) {
-        $mensaje = 'Producto agregado al catálogo correctamente.';
-        $tipoMensaje = 'success';
+        if (!empty($erroresWebP)) {
+            $mensaje = 'Producto agregado, pero algunas imágenes no se convirtieron a WebP: ' . implode('; ', $erroresWebP);
+            $tipoMensaje = 'warning';
+        } else {
+            $mensaje = 'Producto agregado al catálogo correctamente.';
+            $tipoMensaje = 'success';
+        }
     } else {
         $mensaje = 'Error al insertar el producto: ' . $stmt->error;
         $tipoMensaje = 'danger';
@@ -92,16 +178,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $vistas_nuevas = $vistas_actuales;
         $vistas = ['frente', 'izquierda', 'derecha'];
 
+        $erroresWebP = [];
         foreach ($vistas as $vista) {
             if (isset($_FILES["edit_img_$vista"]) && $_FILES["edit_img_$vista"]['error'] === UPLOAD_ERR_OK) {
                 $tmp_name = $_FILES["edit_img_$vista"]['tmp_name'];
-                $ext = pathinfo($_FILES["edit_img_$vista"]['name'], PATHINFO_EXTENSION);
-                
-                $filename = "prod_" . $idProducto . "_{$vista}_" . time() . "." . $ext;
-                $destino = $target_dir . $filename;
 
-                if (move_uploaded_file($tmp_name, $destino)) {
+                $filename = "prod_" . $idProducto . "_{$vista}_" . time() . ".webp";
+                $destino  = $target_dir . $filename;
+                $errWebP  = '';
+
+                if (convertirAWebP($tmp_name, $destino, 82, $errWebP)) {
                     $vistas_nuevas[$vista] = "Juguetes/" . $filename;
+                } else {
+                    $erroresWebP[] = "Vista '{$vista}': {$errWebP}";
                 }
             }
         }
