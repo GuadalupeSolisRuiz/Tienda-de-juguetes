@@ -21,13 +21,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($vistas as $vista) {
         if (isset($_FILES["img_$vista"]) && $_FILES["img_$vista"]['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES["img_$vista"]['tmp_name'];
-            $ext = pathinfo($_FILES["img_$vista"]['name'], PATHINFO_EXTENSION);
-            
-            // Generar nombre único para evitar sobreescribir archivos
-            $filename = "prod_" . time() . "_{$vista}." . $ext;
+            $filename = "prod_" . time() . "_{$vista}.webp";
             $destino = $target_dir . $filename;
 
-            if (move_uploaded_file($tmp_name, $destino)) {
+            $imagenConvertida = false;
+
+            if (function_exists('imagewebp')) {
+                $info = getimagesize($tmp_name);
+
+                if ($info !== false) {
+                    switch ($info[2]) {
+                        case IMAGETYPE_JPEG:
+                            $imagen = imagecreatefromjpeg($tmp_name);
+                            break;
+                        case IMAGETYPE_PNG:
+                            $imagen = imagecreatefrompng($tmp_name);
+                            break;
+                        case IMAGETYPE_WEBP:
+                            $imagen = imagecreatefromwebp($tmp_name);
+                            break;
+                        default:
+                            $imagen = null;
+                            break;
+                    }
+
+                    if ($imagen !== null) {
+                        if (imagewebp($imagen, $destino, 80)) {
+                            $imagenConvertida = true;
+                        }
+                        imagedestroy($imagen);
+                    }
+                }
+            }
+
+            if ($imagenConvertida) {
                 $rutas[$vista] = "Juguetes/" . $filename;
             } else {
                 $rutas[$vista] = "Juguetes/default.png";
