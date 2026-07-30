@@ -68,15 +68,15 @@
 
     // ── Imagen aleatoria y conteo por categoría para la sección "Explora por categoría" ──
     $mapCat = [
+      'nino'         => ['db' => 'Niños',       'keywords' => ['Niño', 'Robot', 'Auto', 'Cohete', 'Soldado', 'Avión', 'Pista', 'Carreras']],
+      'nina'         => ['db' => 'Niñas',       'keywords' => ['Niña', 'Muñeca', 'Princesa', 'Pony', 'Rosa', 'Cocina', 'Casa', 'Castillo']],
+      'bebe'         => ['db' => 'Bebés',       'keywords' => ['Bebé', 'Sonajero', 'Pulpo', 'Oso', 'Gimnasio', 'Mecedora', 'Xilófono']],
       'peluches'     => ['db' => 'Peluches',    'keywords' => ['Peluche', 'Oso', 'León', 'Dinosaurio', 'Conejo', 'Perro']],
       'educativos'   => ['db' => 'Educativos',  'keywords' => ['Educativo', 'Didáctico', 'Gimnasio', 'Sonajero', 'Xilófono', 'Cocina', 'Pulpo']],
       'vehiculos'    => ['db' => 'Vehículos',   'keywords' => ['Vehículo', 'Auto', 'Carro', 'Moto', 'Avión', 'Pista', 'Carreras']],
       'electronicos' => ['db' => 'Electrónicos','keywords' => ['Electrónico', 'Robot', 'Control', 'Volante', 'Interactivo']],
       'munecas'      => ['db' => 'Muñecas',     'keywords' => ['Muñeca', 'Princesa', 'Castillo', 'Casa', 'Soldado', 'Pony']],
-      'exterior'     => ['db' => 'Exterior',    'keywords' => ['Exterior', 'Bicicleta', 'Cohete', 'Mecedora', 'Pistola']],
-      'nino'         => ['db' => 'Niños',       'keywords' => ['Niño', 'Robot', 'Auto', 'Cohete', 'Soldado', 'Avión', 'Pista', 'Carreras']],
-      'nina'         => ['db' => 'Niñas',       'keywords' => ['Niña', 'Muñeca', 'Princesa', 'Pony', 'Rosa', 'Cocina', 'Casa', 'Castillo']],
-      'bebe'         => ['db' => 'Bebés',       'keywords' => ['Bebé', 'Sonajero', 'Pulpo', 'Oso', 'Gimnasio', 'Mecedora', 'Xilófono']]
+      'exterior'     => ['db' => 'Exterior',    'keywords' => ['Exterior', 'Bicicleta', 'Cohete', 'Mecedora', 'Pistola']]
     ];
 
     $imgsCat = [];
@@ -362,15 +362,15 @@
       <div class="row g-4 justify-content-center">
         <?php
         $cats = [
+          'nino' => ['label' => 'Niños', 'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue', 'id' => 'cat-ninos'],
+          'nina' => ['label' => 'Niñas', 'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink', 'id' => 'cat-ninas'],
+          'bebe' => ['label' => 'Bebés', 'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green', 'id' => 'cat-bebes'],
           'peluches' => ['label' => 'Peluches', 'emoji' => '\uD83E\uDDF8', 'color' => '#F59E0B', 'bg' => 'bg-amber', 'id' => 'cat-peluches'],
           'educativos' => ['label' => 'Educativos', 'emoji' => '\uD83E\uDDE9', 'color' => '#8B5CF6', 'bg' => 'bg-purple', 'id' => 'cat-educativos'],
           'vehiculos' => ['label' => 'Vehículos', 'emoji' => '\uD83C\uDFCE', 'color' => '#EF4444', 'bg' => 'bg-red', 'id' => 'cat-vehiculos'],
           'electronicos' => ['label' => 'Electrónicos', 'emoji' => '\uD83C\uDFAE', 'color' => '#6366F1', 'bg' => 'bg-indigo', 'id' => 'cat-electronicos'],
           'munecas' => ['label' => 'Muñecas', 'emoji' => '\uD83E\uDE86', 'color' => '#D946EF', 'bg' => 'bg-fuchsia', 'id' => 'cat-munecas'],
           'exterior' => ['label' => 'Exterior', 'emoji' => '\uD83D\uDEB2', 'color' => '#14B8A6', 'bg' => 'bg-teal', 'id' => 'cat-exterior'],
-          'nino' => ['label' => 'Niños', 'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue', 'id' => 'cat-ninos'],
-          'nina' => ['label' => 'Niñas', 'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink', 'id' => 'cat-ninas'],
-          'bebe' => ['label' => 'Bebés', 'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green', 'id' => 'cat-bebes'],
         ];
         foreach ($cats as $slug => $cat):
           $img = $imgsCat[$slug] ?? null;

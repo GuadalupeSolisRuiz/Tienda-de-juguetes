@@ -12,6 +12,30 @@ $categoriasConfig = [
         'desc'        => 'Explora nuestro catálogo completo de juguetes divertidos y educativos para todas las edades.',
         'keywords'    => []
     ],
+    'nino' => [
+        'label'       => 'Niños',
+        'emoji'       => '👦',
+        'color'       => '#3B82F6',
+        'bg'          => '#EFF6FF',
+        'desc'        => 'Encuentra autos, figuras de acción, superhéroes y aventuras para niños.',
+        'keywords'    => ['Niño', 'Niños', 'Héroe']
+    ],
+    'nina' => [
+        'label'       => 'Niñas',
+        'emoji'       => '👧',
+        'color'       => '#EC4899',
+        'bg'          => '#FDF2F8',
+        'desc'        => 'Descubre la mejor selección de juguetes, muñecas y juegos especiales para niñas.',
+        'keywords'    => ['Niña', 'Niñas']
+    ],
+    'bebe' => [
+        'label'       => 'Bebés',
+        'emoji'       => '🍼',
+        'color'       => '#10B981',
+        'bg'          => '#ECFDF5',
+        'desc'        => 'Juguetes suaves, sonajeros y estimulación temprana totalmente seguros para bebés.',
+        'keywords'    => ['Bebé', 'Bebés', 'Bebe', 'Cuna']
+    ],
     'peluches' => [
         'label'       => 'Peluches',
         'emoji'       => '🧸',
@@ -59,30 +83,6 @@ $categoriasConfig = [
         'bg'          => '#F0FDFA',
         'desc'        => 'Bicicletas, mecedoras, cohetes y juguetes al aire libre para disfrutar fuera de casa.',
         'keywords'    => ['Exterior', 'Aire libre', 'Bicicleta', 'Cohete', 'Mecedora', 'Pistola']
-    ],
-    'nino' => [
-        'label'       => 'Niños',
-        'emoji'       => '👦',
-        'color'       => '#3B82F6',
-        'bg'          => '#EFF6FF',
-        'desc'        => 'Encuentra autos, figuras de acción, superhéroes y aventuras para niños.',
-        'keywords'    => ['Niño', 'Niños', 'Héroe']
-    ],
-    'nina' => [
-        'label'       => 'Niñas',
-        'emoji'       => '👧',
-        'color'       => '#EC4899',
-        'bg'          => '#FDF2F8',
-        'desc'        => 'Descubre la mejor selección de juguetes, muñecas y juegos especiales para niñas.',
-        'keywords'    => ['Niña', 'Niñas']
-    ],
-    'bebe' => [
-        'label'       => 'Bebés',
-        'emoji'       => '🍼',
-        'color'       => '#10B981',
-        'bg'          => '#ECFDF5',
-        'desc'        => 'Juguetes suaves, sonajeros y estimulación temprana totalmente seguros para bebés.',
-        'keywords'    => ['Bebé', 'Bebés', 'Bebe', 'Cuna']
     ]
 ];
 
