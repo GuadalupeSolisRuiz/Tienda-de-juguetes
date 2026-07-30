@@ -144,10 +144,15 @@ document.addEventListener('DOMContentLoaded', function () {
       currentViewIndex = 0; // Siempre empezar desde "frente"
       modalTitle.textContent = card.dataset.name || 'Producto';
       modalDescription.textContent = card.dataset.description || '';
-      modalPrice.textContent = `$${card.dataset.price || '0'}`;
+      modalPrice.textContent = card.dataset.formattedPrice || `$${card.dataset.price || '0'}`;
       modalStock.textContent = `Stock disponible: ${card.dataset.stock || '0'}`;
       const modalCategory = document.getElementById('modalProductCategory');
       if (modalCategory) modalCategory.textContent = card.dataset.categoria || '';
+
+      if (productModalEl) {
+        productModalEl.dataset.activeCardId = card.id;
+      }
+
       setModalView(0);
       openProductModal();
     });
@@ -159,6 +164,37 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // Botón "Agregar al Carrito" dentro del Modal de Producto Expandido
+  const modalBtnAddToCart = document.getElementById('modalBtnAddToCart');
+  if (modalBtnAddToCart) {
+    modalBtnAddToCart.addEventListener('click', function () {
+      const activeCardId = productModalEl?.dataset?.activeCardId;
+      const card = activeCardId ? document.getElementById(activeCardId) : null;
+      let product = null;
+
+      if (card) {
+        const rawPrice = parseFloat(card.dataset.price || card.dataset.rawPrice || 0);
+        const priceText = card.dataset.formattedPrice || card.querySelector('.product-price')?.textContent?.trim() || `$${rawPrice}`;
+
+        product = {
+          id: card.dataset.id || (card.id ? card.id.replace('product-', '') : Math.random().toString(36).substr(2, 9)),
+          name: card.dataset.name || card.dataset.nombre || card.querySelector('h3')?.textContent?.trim() || 'Juguete',
+          price: rawPrice || priceText,
+          formattedPrice: priceText,
+          category: card.dataset.categoria || card.querySelector('.product-category-tag')?.textContent?.trim() || 'General',
+          image: card.dataset.image || card.querySelector('.product-visual')?.src || '',
+          emoji: '🧸'
+        };
+      }
+
+      if (window.toyCart && product) {
+        window.toyCart.add(product);
+        if (bsProductModal) bsProductModal.hide();
+        window.toyCart.open();
+      }
+    });
+  }
 
   // Flecha derecha → avanza en el ciclo
   if (modalArrowRight) {
@@ -298,10 +334,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const forgotPasswordForm = document.getElementById('forgotPasswordForm');
   const resetPasswordForm = document.getElementById('resetPasswordForm');
   const forgotPasswordAlert = document.getElementById('forgotPasswordAlert');
+  const modalLoginForm = document.getElementById('modalLoginForm');
 
   if (forgotPasswordLink && forgotPasswordForm && resetPasswordForm) {
     forgotPasswordLink.addEventListener('click', function (event) {
       event.preventDefault();
+      if (modalLoginForm) modalLoginForm.style.display = 'none';
       forgotPasswordForm.style.display = 'block';
       resetPasswordForm.style.display = 'none';
       forgotPasswordAlert.style.display = 'none';
@@ -524,19 +562,32 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 10. Botón de Carrito en el Navbar
-  const btnCart = document.getElementById('btn-cart');
-  if (btnCart) {
-    btnCart.addEventListener('click', function (e) {
+  // 10. Botones de "Agregar al carrito"
+  document.querySelectorAll('.btn-add-cart').forEach(btn => {
+    btn.addEventListener('click', function (e) {
       e.preventDefault();
-      const cartCountEl = document.querySelector('.cart-count');
-      const count = cartCountEl ? parseInt(cartCountEl.textContent) || 0 : 0;
-      if (count > 0) {
-        alert(`🛒 Tienes ${count} juguete(s) agregados en tu carrito.`);
-      } else {
-        alert('🛒 Tu carrito está vacío. Haz clic en el botón "+" de cualquier juguete para agregarlo.');
+      e.stopPropagation(); // Evitar abrir el modal del producto
+      const card = this.closest('.product-card');
+      if (!card) return;
+
+      const rawPrice = parseFloat(card.dataset.price || card.dataset.rawPrice || 0);
+      const priceText = card.dataset.formattedPrice || card.querySelector('.product-price')?.textContent?.trim() || `$${rawPrice}`;
+
+      const product = {
+        id: card.dataset.id || (card.id ? card.id.replace('product-', '') : Math.random().toString(36).substr(2, 9)),
+        name: card.dataset.name || card.dataset.nombre || card.querySelector('h3')?.textContent?.trim() || 'Juguete',
+        price: rawPrice || priceText,
+        formattedPrice: priceText,
+        category: card.dataset.categoria || card.querySelector('.product-category-tag')?.textContent?.trim() || 'General',
+        image: card.dataset.image || card.querySelector('.product-visual')?.src || '',
+        emoji: '🧸'
+      };
+
+      if (window.toyCart) {
+        window.toyCart.add(product);
+        window.toyCart.open(); // Abrir el carrito automáticamente al agregar
       }
     });
-  }
+  });
 
 });

@@ -49,7 +49,7 @@ if ($action === 'send') {
 }
 
 if ($action === 'reset') {
-    $codigoIngresado = trim($_POST['codigo'] ?? '');
+    $codigoIngresado = trim($_POST['codigo'] ?? $_POST['token'] ?? '');
     $nuevaContrasena = trim($_POST['nueva_contrasena'] ?? '');
     $confirmarContrasena = trim($_POST['confirmar_contrasena'] ?? '');
     $correo = $_SESSION['reset_email'] ?? '';

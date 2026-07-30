@@ -36,13 +36,15 @@
       $check_stmt->close();
     }
 
-    if ($select_stmt = $conexion->prepare("
+    if (
+      $select_stmt = $conexion->prepare("
       SELECT p.id_productos, p.nombre_producto, p.descripcion, p.precio, p.stock, p.imagen,
              COALESCE(c.nombre_categoria, 'Sin categoría') AS nombre_categoria
       FROM productos p
       LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
       ORDER BY p.id_productos DESC
-    ")) {
+    ")
+    ) {
       $select_stmt->execute();
       $select_result = $select_stmt->get_result();
       while ($row = $select_result->fetch_assoc()) {
@@ -52,13 +54,13 @@
         }
 
         $productos[] = [
-          "id"         => (int) $row["id_productos"],
-          "nombre"     => $row["nombre_producto"],
+          "id" => (int) $row["id_productos"],
+          "nombre" => $row["nombre_producto"],
           "descripcion" => $row["descripcion"],
-          "precio"     => (float) $row["precio"],
-          "stock"      => (int) $row["stock"],
-          "categoria"  => $row["nombre_categoria"],
-          "vistas"     => $vistas
+          "precio" => (float) $row["precio"],
+          "stock" => (int) $row["stock"],
+          "categoria" => $row["nombre_categoria"],
+          "vistas" => $vistas
         ];
       }
       $select_stmt->close();
@@ -90,7 +92,7 @@
       $ccount->execute();
       $crow2 = $ccount->get_result()->fetch_assoc();
       $ccount->close();
-      $countsCat[$slug] = (int)($crow2['n'] ?? 0);
+      $countsCat[$slug] = (int) ($crow2['n'] ?? 0);
     }
   }
   ?>
@@ -129,6 +131,68 @@
       <span class="ticker-item"><i class="bi bi-shield-check"></i> Compra 100% segura y garantizada</span>
     </div>
   </div>
+
+
+  <!-- ── FEATURED PRODUCTS (PROMOTED TO TOP) ── -->
+  <section class="products-section" id="productos" style="padding: 40px 0 50px; background: #ffffff;">
+    <div class="container">
+      <div class="section-header mb-4">
+        <span class="section-badge yellow"><i class="bi bi-star-fill"></i> Destacados</span>
+        <h2>Juguetes más populares</h2>
+        <p>Los favoritos de nuestros clientes. ¡No te quedes sin el tuyo!</p>
+      </div>
+
+      <div class="row g-4">
+        <?php if (!empty($productos)): ?>
+          <?php foreach ($productos as $producto): ?>
+            <div class="col-6 col-lg-3">
+              <div class="product-card" id="product-<?= (int) $producto['id'] ?>" data-id="<?= (int) $producto['id'] ?>"
+                data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
+                data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
+                data-price="<?= (float) $producto['precio'] ?>" data-raw-price="<?= (float) $producto['precio'] ?>"
+                data-formatted-price="$<?= number_format($producto['precio'], 0, ',', '.') ?>"
+                data-stock="<?= (int) $producto['stock'] ?>"
+                data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
+                data-image="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
+                data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
+                role="button" tabindex="0">
+                <div class="product-image">
+                  <span class="product-badge new">Nuevo</span>
+                  <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+                  <img
+                    src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
+                    alt="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>" class="product-visual"
+                    data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'>
+                  <div class="product-card-hint">Toca para ver más</div>
+                </div>
+                <div class="product-info">
+                  <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
+                  <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
+                  <div class="product-footer mt-auto">
+                    <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
+                    <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="col-12">
+            <div class="alert alert-info">No hay productos registrados en la base de datos todavía.</div>
+          </div>
+        <?php endif; ?>
+      </div>
+
+      <!-- View all button -->
+      <div class="text-center mt-4">
+        <a href="categoria.php?c=todos" class="btn-secondary-custom" id="btn-view-all">
+          Ver todos los productos
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 
 
   <!-- ── HERO ── -->
@@ -222,115 +286,53 @@
       <div class="row g-4 justify-content-center">
         <?php
         $cats = [
-          'nina' => ['label' => 'Niñas',  'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink',   'id' => 'cat-ninas'],
-          'nino' => ['label' => 'Niños',  'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue',   'id' => 'cat-ninos'],
-          'bebe' => ['label' => 'Bebés',  'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green',  'id' => 'cat-bebes'],
+          'nina' => ['label' => 'Niñas', 'emoji' => '\uD83D\uDC67', 'color' => '#EC4899', 'bg' => 'bg-pink', 'id' => 'cat-ninas'],
+          'nino' => ['label' => 'Niños', 'emoji' => '\uD83D\uDC66', 'color' => '#3B82F6', 'bg' => 'bg-blue', 'id' => 'cat-ninos'],
+          'bebe' => ['label' => 'Bebés', 'emoji' => '\uD83C\uDF7C', 'color' => '#10B981', 'bg' => 'bg-green', 'id' => 'cat-bebes'],
         ];
         foreach ($cats as $slug => $cat):
-          $img   = $imgsCat[$slug] ?? null;
+          $img = $imgsCat[$slug] ?? null;
           $count = $countsCat[$slug] ?? 0;
-        ?>
-        <div class="col-6 col-md-4 col-lg-3">
-          <a href="categoria.php?c=<?= $slug ?>" class="category-card" id="<?= $cat['id'] ?>" style="overflow:hidden; padding:0;">
-            <div style="height:160px; overflow:hidden; border-radius:18px 18px 0 0; background:#f3f4f6; display:flex; align-items:center; justify-content:center; position:relative;">
-              <?php if ($img): ?>
-                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($cat['label']) ?>" style="width:100%; height:100%; object-fit:cover; transition:transform .35s ease;" class="cat-thumb-img">
-                <div style="position:absolute;inset:0;background:linear-gradient(to top,<?= $cat['color'] ?>44 0%,transparent 60%);"></div>
-              <?php else: ?>
-                <span style="font-size:3.5rem;"><?= json_decode('"'.$cat['emoji'].'"') ?></span>
-              <?php endif; ?>
-            </div>
-            <div style="padding:16px 20px 20px;">
-              <h3 style="font-family:'Fredoka One',cursive; font-size:1.25rem; color:var(--text); margin-bottom:4px;"><?= htmlspecialchars($cat['label']) ?></h3>
-              <p style="font-size:.82rem; color:var(--text-light); margin:0;">
-                <?= $count > 0 ? "+{$count} producto" . ($count !== 1 ? 's' : '') : 'Próximamente' ?>
-              </p>
-            </div>
-          </a>
-        </div>
+          ?>
+          <div class="col-6 col-md-4 col-lg-3">
+            <a href="categoria.php?c=<?= $slug ?>" class="category-card" id="<?= $cat['id'] ?>"
+              style="overflow:hidden; padding:0;">
+              <div
+                style="height:160px; overflow:hidden; border-radius:18px 18px 0 0; background:#f3f4f6; display:flex; align-items:center; justify-content:center; position:relative;">
+                <?php if ($img): ?>
+                  <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($cat['label']) ?>"
+                    style="width:100%; height:100%; object-fit:cover; transition:transform .35s ease;"
+                    class="cat-thumb-img">
+                  <div
+                    style="position:absolute;inset:0;background:linear-gradient(to top,<?= $cat['color'] ?>44 0%,transparent 60%);">
+                  </div>
+                <?php else: ?>
+                  <span style="font-size:3.5rem;"><?= json_decode('"' . $cat['emoji'] . '"') ?></span>
+                <?php endif; ?>
+              </div>
+              <div style="padding:16px 20px 20px;">
+                <h3 style="font-family:'Fredoka One',cursive; font-size:1.25rem; color:var(--text); margin-bottom:4px;">
+                  <?= htmlspecialchars($cat['label']) ?>
+                </h3>
+                <p style="font-size:.82rem; color:var(--text-light); margin:0;">
+                  <?= $count > 0 ? "+{$count} producto" . ($count !== 1 ? 's' : '') : '' ?>
+                </p>
+              </div>
+            </a>
+          </div>
         <?php endforeach; ?>
       </div>
     </div>
   </section>
 
   <style>
-    .category-card:hover .cat-thumb-img { transform: scale(1.07); }
+    .category-card:hover .cat-thumb-img {
+      transform: scale(1.07);
+    }
   </style>
 
 
-  <!-- ── FEATURED PRODUCTS ── -->
-  <section class="products-section" id="productos">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-badge yellow"><i class="bi bi-star-fill"></i> Destacados</span>
-        <h2>Juguetes más populares</h2>
-        <p>Los favoritos de nuestros clientes. ¡No te quedes sin el tuyo!</p>
-      </div>
-
-      <div class="row g-4">
-        <?php if (!empty($productos)): ?>
-          <?php foreach ($productos as $producto): ?>
-            <div class="col-6 col-lg-3">
-              <div class="product-card"
-                id="product-<?= (int) $producto['id'] ?>"
-                data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
-                data-price="<?= number_format($producto['precio'], 0, ',', '.') ?>"
-                data-stock="<?= (int) $producto['stock'] ?>"
-                data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
-                data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
-                role="button"
-                tabindex="0">
-                <div class="product-image">
-                  <span class="product-badge new">Nuevo</span>
-                  <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
-                  <img
-                    src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
-                    alt="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                    class="product-visual"
-                    data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                    data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'>
-                  <div class="product-card-hint">Toca para ver más</div>
-                </div>
-                <div class="product-info">
-                  <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
-                  <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
-                  <p class="description"><?= htmlspecialchars($producto['descripcion']) ?></p>
-                  <div class="product-rating">
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <span>(128)</span>
-                  </div>
-                  <div class="product-footer">
-                    <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
-                    <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <div class="col-12">
-            <div class="alert alert-info">No hay productos registrados en la base de datos todavía.</div>
-          </div>
-        <?php endif; ?>
-      </div>
-
-      <!-- View all button -->
-      <div class="text-center mt-5">
-        <a href="#" class="btn-secondary-custom" id="btn-view-all">
-          Ver todos los productos
-          <i class="bi bi-arrow-right"></i>
-        </a>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ── PROMO BANNER ── -->
+  <!-- ── PROMO BANNER ──
   <section class="promo-banner">
     <div class="container">
       <div class="row align-items-center">
@@ -352,7 +354,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
 
   <!-- ── WHY US ── -->
@@ -533,8 +535,7 @@
         <div class="col-lg-3 col-md-6 col-6">
           <h5>Contacto</h5>
           <ul>
-            <li><a href="mailto:hola@toysnova.com"><i
-                  class="bi bi-envelope me-2"></i>hola@toysnova.com</a></li>
+            <li><a href="mailto:hola@toysnova.com"><i class="bi bi-envelope me-2"></i>hola@toysnova.com</a></li>
             <li><a href="tel:+521234567890"><i class="bi bi-telephone me-2"></i>(123) 456-7890</a></li>
             <li><a href="#"><i class="bi bi-geo-alt me-2"></i>Ciudad de México, MX</a></li>
           </ul>
@@ -552,50 +553,60 @@
         </div>
       </div>
     </div>
-  </footer> --> 
-  <!-- se comento el metodo de pago -->
+  </footer> -->
+        <!-- se comento el metodo de pago -->
 
 
-  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content product-modal-content">
-        <button type="button" class="btn-close product-modal-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        <div class="row g-0">
-          <div class="col-lg-6">
-            <div class="product-modal-image-wrap">
-              <img id="modalProductImage" src="" alt="" class="product-modal-image">
-              <div class="modal-nav-arrows" role="group" aria-label="Cambiar vista del juguete">
-                <button class="modal-arrow modal-arrow-left" id="modalArrowLeft" aria-label="Vista anterior"><i class="bi bi-chevron-left"></i></button>
-                <button class="modal-arrow modal-arrow-right" id="modalArrowRight" aria-label="Vista siguiente"><i class="bi bi-chevron-right"></i></button>
+        <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content product-modal-content">
+              <button type="button" class="btn-close product-modal-close" data-bs-dismiss="modal"
+                aria-label="Cerrar"></button>
+              <div class="row g-0">
+                <div class="col-lg-6">
+                  <div class="product-modal-image-wrap">
+                    <img id="modalProductImage" src="" alt="" class="product-modal-image">
+                    <div class="modal-nav-arrows" role="group" aria-label="Cambiar vista del juguete">
+                      <button class="modal-arrow modal-arrow-left" id="modalArrowLeft" aria-label="Vista anterior"><i
+                          class="bi bi-chevron-left"></i></button>
+                      <button class="modal-arrow modal-arrow-right" id="modalArrowRight" aria-label="Vista siguiente"><i
+                          class="bi bi-chevron-right"></i></button>
+                    </div>
+                    <div class="modal-view-dots" aria-hidden="true">
+                      <span class="modal-view-dot" data-dot="izquierda"></span>
+                      <span class="modal-view-dot active" data-dot="frente"></span>
+                      <span class="modal-view-dot" data-dot="derecha"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="product-modal-body">
+                    <span class="product-category-tag" id="modalProductCategory"></span>
+                    <h3 id="productModalLabel"></h3>
+                    <p id="modalProductDescription"></p>
+                    <div class="product-modal-meta">
+                      <div class="product-modal-price" id="modalProductPrice"></div>
+                      <div class="product-modal-stock" id="modalProductStock"></div>
+                    </div>
+                    <button type="button" class="btn-primary-custom w-100 justify-content-center mt-3 py-3"
+                      id="modalBtnAddToCart" style="border-radius: 14px; font-size: 1rem; font-weight: 800;">
+                      <i class="bi bi-cart-plus-fill fs-5 me-2"></i>
+                      Agregar al Carrito
+                    </button>
+                    <p class="product-modal-help mt-3 mb-0">Haz clic en las flechas para cambiar entre las vistas del
+                      producto.</p>
+                  </div>
+                </div>
               </div>
-              <div class="modal-view-dots" aria-hidden="true">
-                <span class="modal-view-dot" data-dot="izquierda"></span>
-                <span class="modal-view-dot active" data-dot="frente"></span>
-                <span class="modal-view-dot" data-dot="derecha"></span>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="product-modal-body">
-              <span class="product-category-tag" id="modalProductCategory"></span>
-              <h3 id="productModalLabel"></h3>
-              <p id="modalProductDescription"></p>
-              <div class="product-modal-meta">
-                <div class="product-modal-price" id="modalProductPrice"></div>
-                <div class="product-modal-stock" id="modalProductStock"></div>
-              </div>
-              <p class="product-modal-help">Haz clic en las flechas para cambiar entre las vistas del producto.</p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Bootstrap 5 JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-  <!-- General App Scripts -->
-  <script src="assets/js/script.js"></script>
+        <!-- Bootstrap 5 JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+        <!-- General App Scripts -->
+        <script src="assets/js/cart.js"></script>
+        <script src="assets/js/script.js"></script>
 </body>
 
 </html>

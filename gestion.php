@@ -2,10 +2,14 @@
 session_start();
 
 // Permitir acceso solo a Administradores y Editores
-if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['usuario_rol']) || !in_array(strtolower($_SESSION['usuario_rol']), ['administrador', 'editor'])) {
+$userRol = strtolower($_SESSION['usuario_rol'] ?? '');
+if (!isset($_SESSION['usuario_id']) || !in_array($userRol, ['administrador', 'admin', 'editor'])) {
     header('Location: index.php');
     exit;
 }
+
+$esAdmin = in_array($userRol, ['administrador', 'admin']);
+$esEditor = ($userRol === 'editor');
 
 include 'include/conect.php';
 
@@ -253,16 +257,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_usuario'], $_POST[
     $idRol = (int)$_POST['id_rol'];
 
     if ($idUsuario > 0 && in_array($idRol, [1, 2, 3], true)) {
-        $stmt = $conexion->prepare('UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?');
-        $stmt->bind_param('ii', $idRol, $idUsuario);
-        if ($stmt->execute()) {
-            $mensaje = 'Rol actualizado correctamente.';
-            $tipoMensaje = 'success';
+        // Consultar el rol actual del usuario antes de actualizar
+        $stmtCheck = $conexion->prepare('SELECT id_rol FROM usuarios WHERE id_usuario = ?');
+        $stmtCheck->bind_param('i', $idUsuario);
+        $stmtCheck->execute();
+        $resCheck = $stmtCheck->get_result()->fetch_assoc();
+        $stmtCheck->close();
+
+        $rolActualId = (int)($resCheck['id_rol'] ?? 0);
+
+        // Restricción: No se permite promover un Cliente (1) a Administrador (3)
+        if ($rolActualId === 1 && $idRol === 3) {
+            $mensaje = 'No está permitido cambiar a un usuario con rol Cliente directamente a Administrador.';
+            $tipoMensaje = 'warning';
         } else {
-            $mensaje = 'No se pudo actualizar el rol.';
-            $tipoMensaje = 'danger';
+            $stmt = $conexion->prepare('UPDATE usuarios SET id_rol = ? WHERE id_usuario = ?');
+            $stmt->bind_param('ii', $idRol, $idUsuario);
+            if ($stmt->execute()) {
+                $mensaje = 'Rol actualizado correctamente.';
+                $tipoMensaje = 'success';
+            } else {
+                $mensaje = 'No se pudo actualizar el rol.';
+                $tipoMensaje = 'danger';
+            }
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
 
@@ -321,7 +340,9 @@ $conexion->close();
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
               <div>
                 <h2 class="fw-bold mb-1">Panel de Gestión</h2>
-                <p class="text-muted mb-0">Administra los productos del catálogo y los usuarios del sistema.</p>
+                <p class="text-muted mb-0">
+                  <?php echo $esAdmin ? 'Administra los productos del catálogo y los usuarios del sistema.' : 'Administra los productos del catálogo de juguetes.'; ?>
+                </p>
               </div>
               <a href="index.php" class="btn btn-outline-secondary rounded-3">
                 <i class="bi bi-arrow-left"></i> Volver al inicio
@@ -340,9 +361,11 @@ $conexion->close();
               <li class="nav-item" role="presentation">
                 <button class="nav-link active fs-5" id="productos-tab" data-bs-toggle="tab" data-bs-target="#productos-pane" type="button" role="tab"><i class="bi bi-box-seam me-2"></i>Catálogo de Productos</button>
               </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link fs-5" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios-pane" type="button" role="tab"><i class="bi bi-people me-2"></i>Gestión de Usuarios</button>
-              </li>
+              <?php if ($esAdmin): ?>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link fs-5" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios-pane" type="button" role="tab"><i class="bi bi-people me-2"></i>Gestión de Usuarios</button>
+                </li>
+              <?php endif; ?>
             </ul>
 
             <div class="tab-content" id="gestionTabsContent">
@@ -490,6 +513,7 @@ $conexion->close();
 
               </div>
 
+              <?php if ($esAdmin): ?>
               <!-- ================= PESTAÑA 2: USUARIOS ================= -->
               <div class="tab-pane fade" id="usuarios-pane" role="tabpanel">
                 
@@ -590,7 +614,9 @@ $conexion->close();
                                 <select name="id_rol" class="form-select form-select-sm" style="max-width: 140px;">
                                   <option value="1" <?php echo (int)$usuario['id_rol'] === 1 ? 'selected' : ''; ?>>Cliente</option>
                                   <option value="2" <?php echo (int)$usuario['id_rol'] === 2 ? 'selected' : ''; ?>>Editor</option>
-                                  <option value="3" <?php echo (int)$usuario['id_rol'] === 3 ? 'selected' : ''; ?>>Administrador</option>
+                                  <?php if ((int)$usuario['id_rol'] !== 1): ?>
+                                    <option value="3" <?php echo (int)$usuario['id_rol'] === 3 ? 'selected' : ''; ?>>Administrador</option>
+                                  <?php endif; ?>
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
                               </form>
@@ -606,6 +632,7 @@ $conexion->close();
                 </div>
 
               </div>
+              <?php endif; ?>
 
             </div>
 

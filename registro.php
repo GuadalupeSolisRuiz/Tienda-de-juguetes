@@ -381,6 +381,7 @@
   <!-- Bootstrap 5 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
   <!-- General App Scripts -->
+  <script src="assets/js/cart.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
 

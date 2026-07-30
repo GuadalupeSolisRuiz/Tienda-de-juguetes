@@ -192,10 +192,10 @@ if ($conexion) {
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
   <link href="assets/css/style.css" rel="stylesheet"/>
   <style>
-    /* ── HERO CATEGORÍA ── */
+    /* ── HERO CATEGORÍA COMPACTO ── */
     .cat-hero {
       background: linear-gradient(135deg, <?= $cfg['bg'] ?> 0%, #ffffff 100%);
-      padding: 50px 0 40px;
+      padding: 16px 0 12px;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -209,64 +209,64 @@ if ($conexion) {
       pointer-events: none;
     }
     .cat-hero-emoji {
-      font-size: 4.5rem;
+      font-size: 1.8rem;
       line-height: 1;
-      display: block;
-      margin-bottom: 12px;
-      animation: bounceIn .7s ease-out both;
-      filter: drop-shadow(0 6px 12px <?= $cfg['color'] ?>33);
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+      filter: drop-shadow(0 3px 6px <?= $cfg['color'] ?>33);
     }
     .cat-hero h1 {
       font-family: 'Fredoka One', cursive;
-      font-size: 2.8rem;
+      font-size: 1.4rem;
       color: var(--text);
-      margin-bottom: 8px;
-      animation: slideUp .6s ease-out .1s both;
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 0;
     }
     .cat-hero h1 span { color: <?= $cfg['color'] ?>; }
     .cat-hero p {
-      font-size: 1rem;
+      font-size: 0.82rem;
       color: var(--text-light);
-      max-width: 520px;
-      margin: 0 auto 20px;
-      animation: slideUp .6s ease-out .2s both;
+      max-width: 580px;
+      margin: 4px auto 0;
     }
     .cat-hero-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 16px;
+      gap: 4px;
+      padding: 2px 10px;
       border-radius: 50px;
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: .07em;
-      margin-bottom: 14px;
+      letter-spacing: .05em;
+      margin-bottom: 4px;
     }
 
     /* ── BARRA NAVEGACIÓN RÁPIDA DE CATEGORÍAS (PILLS) ── */
     .category-pills-bar {
       background: #ffffff;
-      padding: 14px 0;
+      padding: 8px 0;
       border-bottom: 1px solid var(--border);
       box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
     .pills-scroll {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 2px;
       scrollbar-width: thin;
     }
     .pill-item {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 18px;
+      padding: 6px 14px;
       border-radius: 50px;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       text-decoration: none;
       color: var(--text-light);
       background: #F3F4F6;
@@ -287,7 +287,7 @@ if ($conexion) {
 
     /* ── PRODUCTS SECTION ── */
     .cat-products-section {
-      padding: 50px 0 80px;
+      padding: 20px 0 60px;
       background: var(--bg);
       min-height: 50vh;
     }
@@ -303,18 +303,17 @@ if ($conexion) {
 <body>
   <?php include 'views/navbar.php'; ?>
 
-  <!-- ── HERO ── -->
+  <!-- ── HERO COMPACTO ── -->
   <section class="cat-hero">
     <div class="container position-relative">
       <div class="cat-hero-pill" style="background:<?= $cfg['color'] ?>18; color:<?= $cfg['color'] ?>;">
-        <i class="bi bi-grid-fill me-1"></i> Categoría de Catálogo
+        <i class="bi bi-grid-fill me-1"></i> Categoría
       </div>
-      <span class="cat-hero-emoji"><?= $cfg['emoji'] ?></span>
-      <h1>Catálogo: <span><?= htmlspecialchars($cfg['label']) ?></span></h1>
+      <div>
+        <span class="cat-hero-emoji"><?= $cfg['emoji'] ?></span>
+        <h1>Catálogo: <span><?= htmlspecialchars($cfg['label']) ?></span></h1>
+      </div>
       <p><?= htmlspecialchars($cfg['desc']) ?></p>
-      <a href="index.php" class="btn-secondary-custom" style="font-size:.85rem; padding:8px 20px;">
-        <i class="bi bi-arrow-left me-1"></i> Volver al Inicio
-      </a>
     </div>
   </section>
 
@@ -359,11 +358,15 @@ if ($conexion) {
             <div class="col-6 col-md-4 col-lg-3">
               <div class="product-card"
                 id="product-<?= (int)$producto['id'] ?>"
+                data-id="<?= (int)$producto['id'] ?>"
                 data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
                 data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
-                data-price="<?= number_format($producto['precio'], 0, ',', '.') ?>"
+                data-price="<?= (float)$producto['precio'] ?>"
+                data-raw-price="<?= (float)$producto['precio'] ?>"
+                data-formatted-price="$<?= number_format($producto['precio'], 0, ',', '.') ?>"
                 data-stock="<?= (int)$producto['stock'] ?>"
                 data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
+                data-image="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/default.png', ENT_QUOTES, 'UTF-8') ?>"
                 data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
                 role="button" tabindex="0">
                 <div class="product-image">
@@ -380,14 +383,7 @@ if ($conexion) {
                 <div class="product-info">
                   <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
                   <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
-                  <p class="description"><?= htmlspecialchars($producto['descripcion']) ?></p>
-                  <div class="product-rating">
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <span>(128)</span>
-                  </div>
-                  <div class="product-footer">
+                  <div class="product-footer mt-auto">
                     <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
                     <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
                   </div>
@@ -449,7 +445,11 @@ if ($conexion) {
                 <div class="product-modal-price" id="modalProductPrice"></div>
                 <div class="product-modal-stock" id="modalProductStock"></div>
               </div>
-              <p class="product-modal-help">Haz clic en las flechas para cambiar entre las vistas del producto.</p>
+              <button type="button" class="btn-primary-custom w-100 justify-content-center mt-3 py-3" id="modalBtnAddToCart" style="border-radius: 14px; font-size: 1rem; font-weight: 800;">
+                <i class="bi bi-cart-plus-fill fs-5 me-2"></i>
+                Agregar al Carrito
+              </button>
+              <p class="product-modal-help mt-3 mb-0">Haz clic en las flechas para cambiar entre las vistas del producto.</p>
             </div>
           </div>
         </div>
@@ -458,6 +458,7 @@ if ($conexion) {
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/cart.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
 </html>

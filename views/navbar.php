@@ -51,7 +51,10 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
         <li class="nav-item"><a class="nav-link" href="categoria.php?c=todos" id="nav-ofertas">Ofertas</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#categorias" id="nav-nosotros">Nosotros</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php#productos" id="nav-contacto">Contacto</a></li>
-        <?php if (isset($_SESSION['usuario_id']) && isset($_SESSION['usuario_rol']) && strtolower($_SESSION['usuario_rol']) === 'administrador'): ?>
+        <?php 
+        $userRolNavbar = strtolower($_SESSION['usuario_rol'] ?? '');
+        if (isset($_SESSION['usuario_id']) && in_array($userRolNavbar, ['administrador', 'editor'])): 
+        ?>
           <li class="nav-item">
             <a class="nav-link fw-semibold nav-gestion-pill" href="gestion.php" id="nav-gestion"
               style="border: none; background: transparent; padding: 0.4rem 0.8rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.17); color: #7C3AED; transition: all 0.2s ease;">
@@ -193,7 +196,7 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
           </div>
 
           <!-- Password -->
-          <div class="mb-3">
+          <div class="mb-2">
             <label for="modalLoginPassword" class="form-label">Contraseña <span class="required-star">*</span></label>
             <div class="input-icon-wrap">
               <i class="bi bi-lock field-icon"></i>
@@ -208,11 +211,67 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
             </div>
           </div>
 
+          <!-- Olvidé mi contraseña link -->
+          <div class="d-flex justify-content-end mb-3">
+            <a href="#" id="forgotPasswordLink" class="small text-purple text-decoration-none fw-semibold">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
           <!-- Submit -->
-          <button type="submit" class="btn-register w-100 mt-2 mb-3">
+          <button type="submit" class="btn-register w-100 mt-1 mb-3">
             <i class="bi bi-box-arrow-in-right fs-5 me-2"></i>
             Iniciar sesión
           </button>
+        </form>
+
+        <!-- Alerta de recuperación -->
+        <div id="forgotPasswordAlert" class="alert mb-3" style="display: none; font-size: 0.85rem; border-radius: 8px;"></div>
+
+        <!-- Formulario de Recuperación (envío de código) -->
+        <form id="forgotPasswordForm" style="display: none;" novalidate>
+          <div class="mb-3">
+            <label for="forgotEmail" class="form-label">Correo electrónico registrado <span class="required-star">*</span></label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-envelope field-icon"></i>
+              <input type="email" id="forgotEmail" name="correo" class="form-control" placeholder="ejemplo@correo.com" required />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary-custom w-100 py-2.5 mb-2">Enviar código de recuperación</button>
+          <button type="button" class="btn btn-link w-100 text-muted small text-decoration-none" onclick="document.getElementById('forgotPasswordForm').style.display='none'; document.getElementById('modalLoginForm').style.display='block';">Volver al inicio de sesión</button>
+        </form>
+
+        <!-- Formulario de Restablecimiento (código + nueva contraseña) -->
+        <form id="resetPasswordForm" style="display: none;" novalidate>
+          <div class="mb-3">
+            <label for="resetToken" class="form-label">Código de recuperación <span class="required-star">*</span></label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-key field-icon"></i>
+              <input type="text" id="resetToken" name="codigo" class="form-control" placeholder="Ingresa el código enviado" required />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nueva contraseña <span class="required-star">*</span></label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-lock field-icon"></i>
+              <input type="password" id="newPassword" name="nueva_contrasena" class="form-control has-toggle" placeholder="Nueva contraseña" required />
+              <button class="toggle-pw" type="button" onclick="toggleModalPw('newPassword', this)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar contraseña <span class="required-star">*</span></label>
+            <div class="input-icon-wrap">
+              <i class="bi bi-lock field-icon"></i>
+              <input type="password" id="confirmPassword" name="confirmar_contrasena" class="form-control has-toggle" placeholder="Repite la contraseña" required />
+              <button class="toggle-pw" type="button" onclick="toggleModalPw('confirmPassword', this)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary-custom w-100 py-2.5 mb-2">Guardar nueva contraseña</button>
+          <button type="button" class="btn btn-link w-100 text-muted small text-decoration-none" onclick="document.getElementById('resetPasswordForm').style.display='none'; document.getElementById('modalLoginForm').style.display='block';">Volver al inicio de sesión</button>
         </form>
 
         <!-- Divider -->
@@ -234,6 +293,43 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
     </div>
   </div>
 </div>
+
+<!-- ── CART DRAWER ── -->
+<div class="cart-drawer" id="cartDrawer" role="dialog" aria-label="Carrito de compras">
+  <div class="cart-drawer-header">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-cart3 fs-5" style="color:var(--purple)"></i>
+      <h3>Tu Carrito</h3>
+    </div>
+    <button class="cart-drawer-close" id="cartDrawerClose" aria-label="Cerrar carrito">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="cart-drawer-body" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <p>Tu carrito está vacío</p>
+      <small>¡Agrega tus juguetes favoritos!</small>
+    </div>
+  </div>
+
+  <div class="cart-drawer-footer" id="cartFooter" style="display:none">
+    <div class="cart-total-row">
+      <span>Total estimado</span>
+      <strong id="cartTotal">$0</strong>
+    </div>
+    <button class="btn-checkout-cart" id="btnCheckout">
+      <i class="bi bi-bag-check-fill"></i>
+      Proceder al pago
+    </button>
+    <button class="btn-clear-cart" id="btnClearCart">
+      <i class="bi bi-trash3"></i>
+      Vaciar carrito
+    </button>
+  </div>
+</div>
+<div class="cart-overlay" id="cartOverlay"></div>
 
 <?php if (isset($_SESSION['usuario_id'])): ?>
   <!-- ── MODAL DE PERFIL ── -->
