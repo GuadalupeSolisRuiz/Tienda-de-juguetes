@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        } catch (err) {}
+        } catch (err) { }
       }
     });
   });
@@ -589,5 +589,63 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // 11. Control de Navegación Cíclica y Temporizador de 10s del Carrusel
+  const track = document.getElementById('productsCarouselTrack');
+  const btnPrev = document.getElementById('btnProductsPrev');
+  const btnNext = document.getElementById('btnProductsNext');
+
+  if (track && btnPrev && btnNext) {
+    const getScrollStep = () => {
+      const itemWidth = track.querySelector('.products-carousel-item')?.offsetWidth || 280;
+      return itemWidth + 22;
+    };
+
+    const nextSlide = () => {
+      const maxScrollLeft = track.scrollWidth - track.clientWidth;
+      const step = getScrollStep();
+
+      // Si estamos al final o muy cerca del final, hacer loop al inicio
+      if (Math.ceil(track.scrollLeft) >= maxScrollLeft - 15) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: step * 2, behavior: 'smooth' });
+      }
+    };
+
+    const prevSlide = () => {
+      const step = getScrollStep();
+
+      // Si estamos al inicio o muy cerca del inicio, hacer loop al final
+      if (track.scrollLeft <= 15) {
+        const maxScrollLeft = track.scrollWidth - track.clientWidth;
+        track.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: -(step * 2), behavior: 'smooth' });
+      }
+    };
+
+    btnNext.addEventListener('click', () => {
+      nextSlide();
+      resetAutoPlay();
+    });
+
+    btnPrev.addEventListener('click', () => {
+      prevSlide();
+      resetAutoPlay();
+    });
+
+    // Auto-avanzar cada 10 segundos (10,000 ms)
+    let autoPlayInterval = setInterval(nextSlide, 5000);
+
+    const resetAutoPlay = () => {
+      clearInterval(autoPlayInterval);
+      autoPlayInterval = setInterval(nextSlide, 5000);
+    };
+
+    // Pausar auto-aviso al pasar el mouse sobre el carrusel
+    track.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+    track.addEventListener('mouseleave', () => resetAutoPlay());
+  }
 
 });

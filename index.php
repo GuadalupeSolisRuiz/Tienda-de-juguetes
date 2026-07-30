@@ -133,55 +133,68 @@
   </div>
 
 
-  <!-- ── FEATURED PRODUCTS (PROMOTED TO TOP) ── -->
+  <!-- ── FEATURED PRODUCTS CAROUSEL ── -->
   <section class="products-section" id="productos" style="padding: 40px 0 50px; background: #ffffff;">
     <div class="container">
-      <div class="section-header mb-4">
+      <!-- Section Header (Centered) -->
+      <div class="section-header text-center mb-4">
         <span class="section-badge yellow"><i class="bi bi-star-fill"></i> Destacados</span>
-        <h2>Juguetes más populares</h2>
-        <p>Los favoritos de nuestros clientes. ¡No te quedes sin el tuyo!</p>
+        <h2 class="mb-1">Juguetes más populares</h2>
+        <p class="mb-0">Los favoritos de nuestros clientes. ¡Explora nuestro catálogo en movimiento!</p>
       </div>
 
-      <div class="row g-4">
-        <?php if (!empty($productos)): ?>
-          <?php foreach ($productos as $producto): ?>
-            <div class="col-6 col-lg-3">
-              <div class="product-card" id="product-<?= (int) $producto['id'] ?>" data-id="<?= (int) $producto['id'] ?>"
-                data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
-                data-price="<?= (float) $producto['precio'] ?>" data-raw-price="<?= (float) $producto['precio'] ?>"
-                data-formatted-price="$<?= number_format($producto['precio'], 0, ',', '.') ?>"
-                data-stock="<?= (int) $producto['stock'] ?>"
-                data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
-                data-image="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
-                data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
-                role="button" tabindex="0">
-                <div class="product-image">
-                  <span class="product-badge new">Nuevo</span>
-                  <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
-                  <img
-                    src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
-                    alt="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>" class="product-visual"
-                    data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
-                    data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'>
-                  <div class="product-card-hint">Toca para ver más</div>
-                </div>
-                <div class="product-info">
-                  <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
-                  <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
-                  <div class="product-footer mt-auto">
-                    <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
-                    <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+      <!-- Wrapper con Flechas Flotantes a los Lados -->
+      <div class="products-carousel-wrapper position-relative">
+        <button class="carousel-side-btn prev-btn" id="btnProductsPrev" aria-label="Anterior producto">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <!-- Carrusel de Productos -->
+        <div class="products-carousel-track" id="productsCarouselTrack">
+          <?php if (!empty($productos)): ?>
+            <?php foreach ($productos as $producto): ?>
+              <div class="products-carousel-item">
+                <div class="product-card" id="product-<?= (int) $producto['id'] ?>" data-id="<?= (int) $producto['id'] ?>"
+                  data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
+                  data-description="<?= htmlspecialchars($producto['descripcion'], ENT_QUOTES, 'UTF-8') ?>"
+                  data-price="<?= (float) $producto['precio'] ?>" data-raw-price="<?= (float) $producto['precio'] ?>"
+                  data-formatted-price="$<?= number_format($producto['precio'], 0, ',', '.') ?>"
+                  data-stock="<?= (int) $producto['stock'] ?>"
+                  data-categoria="<?= htmlspecialchars($producto['categoria'], ENT_QUOTES, 'UTF-8') ?>"
+                  data-image="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
+                  data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
+                  role="button" tabindex="0">
+                  <div class="product-image">
+                    <span class="product-badge new">Nuevo</span>
+                    <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
+                    <img
+                      src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/osof.png', ENT_QUOTES, 'UTF-8') ?>"
+                      alt="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>" class="product-visual"
+                      data-name="<?= htmlspecialchars($producto['nombre'], ENT_QUOTES, 'UTF-8') ?>"
+                      data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'>
+                    <div class="product-card-hint">Toca para ver más</div>
+                  </div>
+                  <div class="product-info">
+                    <span class="product-category-tag"><?= htmlspecialchars($producto['categoria']) ?></span>
+                    <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
+                    <div class="product-footer mt-auto">
+                      <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
+                      <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+                    </div>
                   </div>
                 </div>
               </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div class="w-100">
+              <div class="alert alert-info">No hay productos registrados en la base de datos todavía.</div>
             </div>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <div class="col-12">
-            <div class="alert alert-info">No hay productos registrados en la base de datos todavía.</div>
-          </div>
-        <?php endif; ?>
+          <?php endif; ?>
+        </div>
+
+        <button class="carousel-side-btn next-btn" id="btnProductsNext" aria-label="Siguiente producto">
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
 
       <!-- View all button -->

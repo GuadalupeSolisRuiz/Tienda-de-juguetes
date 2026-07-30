@@ -3511,3 +3511,85 @@ input[type="date"].filled {
   cursor: pointer;
   z-index: 10;
 }
+
+/* ══════════════════════════════════════════════
+   PRODUCTS CAROUSEL SYSTEM
+   ══════════════════════════════════════════════ */
+.products-carousel-wrapper {
+  position: relative !important;
+  padding: 0 54px !important;
+}
+
+@media (max-width: 575.98px) {
+  .products-carousel-wrapper {
+    padding: 0 38px !important;
+  }
+}
+
+.products-carousel-track {
+  display: flex !important;
+  gap: 22px !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  scroll-snap-type: x mandatory !important;
+  padding: 12px 4px 24px 4px !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.products-carousel-track::-webkit-scrollbar {
+  display: none !important;
+}
+
+.products-carousel-item {
+  flex: 0 0 280px !important;
+  max-width: 280px !important;
+  scroll-snap-align: start !important;
+}
+
+@media (max-width: 767.98px) {
+  .products-carousel-item {
+    flex: 0 0 230px !important;
+    max-width: 230px !important;
+  }
+}
+
+.carousel-side-btn {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1.5px solid #E5E7EB !important;
+  color: #1F2937 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  z-index: 20 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.carousel-side-btn.prev-btn {
+  left: 0 !important;
+}
+
+.carousel-side-btn.next-btn {
+  right: 0 !important;
+}
+
+.carousel-side-btn:hover {
+  background: #7C3AED !important;
+  color: #ffffff !important;
+  border-color: #7C3AED !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35) !important;
+}
+
+.carousel-side-btn:active {
+  transform: translateY(-50%) scale(0.95) !important;
+}
