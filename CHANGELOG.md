@@ -1,7 +1,30 @@
 # Changelog — Tienda de Juguetes (Toys Nova)
+
 Todos los cambios notables en este proyecto serán documentados en este archivo.
+
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y este proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
+
 ---
+
+## [4.0.0] - 2026-08-06
+
+### 🚀 Añadido (Added)
+- **Gestión Administrativa de Tickets de Compra**:
+  - Pestaña *"Gestión de Tickets"* en el panel de `gestion.php`.
+  - Endpoint `include/obtener_pedidos_admin.php` para listar recibos globales o filtrados por cliente.
+  - Endpoint `include/actualizar_estado_pedido.php` para cambiar el estado (*Completado*, *Pendiente*, *Cancelado*).
+  - Endpoint `include/eliminar_pedido.php` para eliminar registros de pedidos.
+- **Nuevas Secciones Informativas**:
+  - Sección `#nosotros` en la página principal `index.php` y modal `#nosotrosModal` en `views/navbar.php`.
+  - Sección `#contacto` con formulario en `index.php` y modal `#contactoModal` en `views/navbar.php`.
+- **Sección de Ofertas Especiales**:
+  - Sección `#ofertas` en `index.php` con productos seleccionados en rebaja, tachado de precio original, porcentaje de ahorro y función `window.addOfferToCart()`.
+- **Persistencia de Carrito Asociada a la Cuenta**:
+  - Identificación por usuario en `localStorage` (`toyStoreCart_user_{userId}`).
+  - Conservación automática de productos al cerrar sesión y restauración al volver a iniciar.
+- **Validaciones Estrictas de Inventario**:
+  - Atributos frontend (`min="0.01"`, `min="0"`, `required`) en formularios de agregar y editar productos en `gestion.php`.
+  - Validaciones de servidor en PHP para evitar precios cero/negativos, stock negativo o campos requeridos vacíos.
 - **Configuración de Control de Versiones**:
   - Creación del archivo `.gitignore` optimizado para proyectos PHP, XAMPP, IDEs y logs de sistema.
 ---
