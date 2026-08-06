@@ -101,55 +101,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $descripcion = trim($_POST['descripcion'] ?? '');
     $precio      = floatval($_POST['precio'] ?? 0);
     $stock       = intval($_POST['stock'] ?? 0);
-    $categoria   = intval($_POST['id_categoria'] ?? 1);
+    $categoria   = intval($_POST['id_categoria'] ?? 0);
 
-    // Directorio de subida
-    $target_dir = "Juguetes/";
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-    }
+    if ($nombre === '' || $descripcion === '' || $categoria <= 0) {
+        $mensaje = 'Todos los campos son obligatorios. Por favor completa la información del producto.';
+        $tipoMensaje = 'danger';
+    } elseif ($precio <= 0) {
+        $mensaje = 'El precio del producto no puede ser un número negativo ni cero. Debe ser mayor a 0.';
+        $tipoMensaje = 'danger';
+    } elseif ($stock < 0) {
+        $mensaje = 'El stock del producto no puede ser un número negativo.';
+        $tipoMensaje = 'danger';
+    } else {
+        // Directorio de subida
+        $target_dir = "Juguetes/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
 
-    $rutas = [];
-    $vistas = ['frente', 'izquierda', 'derecha'];
+        $rutas = [];
+        $vistas = ['frente', 'izquierda', 'derecha'];
 
-    $erroresWebP = [];
-    foreach ($vistas as $vista) {
-        if (isset($_FILES["img_$vista"]) && $_FILES["img_$vista"]['error'] === UPLOAD_ERR_OK) {
-            $tmp_name = $_FILES["img_$vista"]['tmp_name'];
+        $erroresWebP = [];
+        foreach ($vistas as $vista) {
+            if (isset($_FILES["img_$vista"]) && $_FILES["img_$vista"]['error'] === UPLOAD_ERR_OK) {
+                $tmp_name = $_FILES["img_$vista"]['tmp_name'];
 
-            $filename = "prod_" . time() . "_{$vista}_" . rand(100, 999) . ".webp";
-            $destino  = $target_dir . $filename;
-            $errWebP  = '';
+                $filename = "prod_" . time() . "_{$vista}_" . rand(100, 999) . ".webp";
+                $destino  = $target_dir . $filename;
+                $errWebP  = '';
 
-            if (convertirAWebP($tmp_name, $destino, 82, $errWebP)) {
-                $rutas[$vista] = "Juguetes/" . $filename;
+                if (convertirAWebP($tmp_name, $destino, 82, $errWebP)) {
+                    $rutas[$vista] = "Juguetes/" . $filename;
+                } else {
+                    $erroresWebP[] = "Vista '{$vista}': {$errWebP}";
+                    $rutas[$vista] = "Juguetes/default.png";
+                }
             } else {
-                $erroresWebP[] = "Vista '{$vista}': {$errWebP}";
                 $rutas[$vista] = "Juguetes/default.png";
             }
-        } else {
-            $rutas[$vista] = "Juguetes/default.png";
         }
-    }
 
-    $imagenes_json = json_encode($rutas, JSON_UNESCAPED_SLASHES);
+        $imagenes_json = json_encode($rutas, JSON_UNESCAPED_SLASHES);
 
-    $stmt = $conexion->prepare("INSERT INTO productos (nombre_producto, descripcion, precio, stock, imagen, id_categoria, id_disponible) VALUES (?, ?, ?, ?, ?, ?, 1)");
-    $stmt->bind_param("ssdisi", $nombre, $descripcion, $precio, $stock, $imagenes_json, $categoria);
+        $stmt = $conexion->prepare("INSERT INTO productos (nombre_producto, descripcion, precio, stock, imagen, id_categoria, id_disponible) VALUES (?, ?, ?, ?, ?, ?, 1)");
+        $stmt->bind_param("ssdisi", $nombre, $descripcion, $precio, $stock, $imagenes_json, $categoria);
 
-    if ($stmt->execute()) {
-        if (!empty($erroresWebP)) {
-            $mensaje = 'Producto agregado, pero algunas imágenes no se convirtieron a WebP: ' . implode('; ', $erroresWebP);
-            $tipoMensaje = 'warning';
+        if ($stmt->execute()) {
+            if (!empty($erroresWebP)) {
+                $mensaje = 'Producto agregado, pero algunas imágenes no se convirtieron a WebP: ' . implode('; ', $erroresWebP);
+                $tipoMensaje = 'warning';
+            } else {
+                $mensaje = 'Producto agregado al catálogo correctamente.';
+                $tipoMensaje = 'success';
+            }
         } else {
-            $mensaje = 'Producto agregado al catálogo correctamente.';
-            $tipoMensaje = 'success';
+            $mensaje = 'Error al insertar el producto: ' . $stmt->error;
+            $tipoMensaje = 'danger';
         }
-    } else {
-        $mensaje = 'Error al insertar el producto: ' . $stmt->error;
-        $tipoMensaje = 'danger';
+        $stmt->close();
     }
-    $stmt->close();
 }
 
 // --- PROCESAR EDICIÓN DE PRODUCTO ---
@@ -159,9 +170,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $descripcion = trim($_POST['descripcion'] ?? '');
     $precio      = floatval($_POST['precio'] ?? 0);
     $stock       = intval($_POST['stock'] ?? 0);
-    $categoria   = intval($_POST['id_categoria'] ?? 1);
+    $categoria   = intval($_POST['id_categoria'] ?? 0);
 
-    if ($idProducto > 0) {
+    if ($idProducto <= 0 || $nombre === '' || $descripcion === '' || $categoria <= 0) {
+        $mensaje = 'Todos los campos son obligatorios al editar un producto.';
+        $tipoMensaje = 'danger';
+    } elseif ($precio <= 0) {
+        $mensaje = 'El precio del producto no puede ser un número negativo ni cero. Debe ser mayor a 0.';
+        $tipoMensaje = 'danger';
+    } elseif ($stock < 0) {
+        $mensaje = 'El stock del producto no puede ser un número negativo.';
+        $tipoMensaje = 'danger';
+    } else {
         // Obtener imágenes actuales
         $stmtImg = $conexion->prepare("SELECT imagen FROM productos WHERE id_productos = ?");
         $stmtImg->bind_param("i", $idProducto);
@@ -366,6 +386,9 @@ $conexion->close();
                   <button class="nav-link fs-5" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios-pane" type="button" role="tab"><i class="bi bi-people me-2"></i>Gestión de Usuarios</button>
                 </li>
               <?php endif; ?>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fs-5" id="tickets-tab" data-bs-toggle="tab" data-bs-target="#tickets-pane" type="button" role="tab" onclick="loadAdminAllTickets()"><i class="bi bi-receipt me-2"></i>Gestión de Tickets</button>
+              </li>
             </ul>
 
             <div class="tab-content" id="gestionTabsContent">
@@ -402,12 +425,12 @@ $conexion->close();
 
                       <div class="col-md-2">
                         <label class="form-label fw-semibold">Precio ($)</label>
-                        <input type="number" step="0.01" name="precio" class="form-control" placeholder="250.00" required>
+                        <input type="number" step="0.01" min="0.01" name="precio" class="form-control" placeholder="250.00" required>
                       </div>
 
                       <div class="col-md-2">
                         <label class="form-label fw-semibold">Stock</label>
-                        <input type="number" name="stock" class="form-control" placeholder="10" required>
+                        <input type="number" min="0" name="stock" class="form-control" placeholder="10" required>
                       </div>
 
                       <div class="col-12">
@@ -582,36 +605,39 @@ $conexion->close();
                 </div>
 
                 <div id="resultados" class="table-responsive">
-                  <table class="table align-middle">
+                  <table class="table align-middle" style="min-width: 1050px;">
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        <th style="width: 60px;">ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Teléfono</th>
                         <th>Fecha registro</th>
-                        <th>Rol actual</th>
-                        <th class="text-end">Acción</th>
+                        <th style="width: 130px;">Rol actual</th>
+                        <th class="text-end" style="width: 340px;">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php foreach ($usuarios as $usuario): ?>
                         <tr>
                           <td><?php echo (int)$usuario['id_usuario']; ?></td>
-                          <td><?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellido']); ?></td>
+                          <td class="fw-semibold"><?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellido']); ?></td>
                           <td><?php echo htmlspecialchars($usuario['correo']); ?></td>
                           <td><?php echo htmlspecialchars($usuario['telefono'] ?: '—'); ?></td>
-                          <td><?php echo htmlspecialchars($usuario['fecha_registro']); ?></td>
-                          <td>
-                            <span class="badge text-capitalize bg-primary">
+                          <td><small class="text-muted"><?php echo htmlspecialchars($usuario['fecha_registro']); ?></small></td>
+                          <td style="white-space: nowrap;">
+                            <span class="badge text-capitalize bg-primary px-3 py-1.5" style="font-size: 0.82rem;">
                               <?php echo htmlspecialchars($usuario['nombre_rol']); ?>
                             </span>
                           </td>
                           <td class="text-end">
-                            <div class="d-flex justify-content-end align-items-center gap-2">
-                              <form method="post" class="d-flex align-items-center gap-2">
+                            <div class="d-flex justify-content-end align-items-center gap-2 flex-nowrap">
+                              <button type="button" class="btn btn-sm btn-outline-purple flex-shrink-0" style="border-color:#7C3AED; color:#7C3AED;" onclick="openAdminUserTickets(<?php echo (int)$usuario['id_usuario']; ?>, '<?php echo htmlspecialchars(addslashes($usuario['nombre'] . ' ' . $usuario['apellido'])); ?>', '<?php echo htmlspecialchars(addslashes($usuario['correo'])); ?>')">
+                                <i class="bi bi-ticket-perforated-fill me-1"></i> Tickets
+                              </button>
+                              <form method="post" class="d-flex align-items-center gap-1 flex-shrink-0">
                                 <input type="hidden" name="id_usuario" value="<?php echo (int)$usuario['id_usuario']; ?>">
-                                <select name="id_rol" class="form-select form-select-sm" style="max-width: 140px;">
+                                <select name="id_rol" class="form-select form-select-sm" style="width: 130px;">
                                   <option value="1" <?php echo (int)$usuario['id_rol'] === 1 ? 'selected' : ''; ?>>Cliente</option>
                                   <option value="2" <?php echo (int)$usuario['id_rol'] === 2 ? 'selected' : ''; ?>>Editor</option>
                                   <?php if ((int)$usuario['id_rol'] !== 1): ?>
@@ -620,7 +646,7 @@ $conexion->close();
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
                               </form>
-                              <button type="button" class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="<?php echo (int)$usuario['id_usuario']; ?>">
+                              <button type="button" class="btn btn-sm btn-outline-danger delete-user-btn flex-shrink-0" data-user-id="<?php echo (int)$usuario['id_usuario']; ?>" title="Eliminar Usuario">
                                 <i class="bi bi-trash"></i>
                               </button>
                             </div>
@@ -633,6 +659,28 @@ $conexion->close();
 
               </div>
               <?php endif; ?>
+
+              <!-- ================= PESTAÑA 3: GESTIÓN DE TICKETS ================= -->
+              <div class="tab-pane fade" id="tickets-pane" role="tabpanel">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 border rounded-4 p-3 bg-light">
+                  <div>
+                    <h5 class="fw-bold mb-1"><i class="bi bi-receipt me-2 text-purple" style="color:#7C3AED;"></i>Todos los Tickets de Compra</h5>
+                    <p class="text-muted small mb-0">Visualiza, actualiza el estado o reimprime cualquier ticket del sistema.</p>
+                  </div>
+                  <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-purple" style="border-color:#7C3AED; color:#7C3AED;" onclick="loadAdminAllTickets()">
+                      <i class="bi bi-arrow-clockwise me-1"></i> Actualizar Lista
+                    </button>
+                  </div>
+                </div>
+
+                <div id="adminAllTicketsContainer">
+                  <div class="text-center py-5">
+                    <div class="spinner-border text-purple" role="status" style="color:#7C3AED;"></div>
+                    <p class="text-muted mt-2 small">Cargando tickets de compra...</p>
+                  </div>
+                </div>
+              </div>
 
             </div>
 
@@ -679,12 +727,12 @@ $conexion->close();
 
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Precio ($)</label>
-                <input type="number" step="0.01" name="precio" id="edit_precio" class="form-control" required>
+                <input type="number" step="0.01" min="0.01" name="precio" id="edit_precio" class="form-control" required>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label fw-semibold">Stock</label>
-                <input type="number" name="stock" id="edit_stock" class="form-control" required>
+                <input type="number" min="0" name="stock" id="edit_stock" class="form-control" required>
               </div>
 
               <div class="col-12">
@@ -813,6 +861,248 @@ $conexion->close();
         });
       });
     });
+  </script>
+
+  <!-- MODAL GESTIONAR TICKETS DE USUARIO -->
+  <div class="modal fade" id="adminUserTicketsModal" tabindex="-1" aria-labelledby="adminUserTicketsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg">
+        <div class="modal-header text-white rounded-top-4 py-3 px-4" style="background:#7C3AED;">
+          <div class="d-flex align-items-center gap-2">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;">
+              <i class="bi bi-ticket-perforated-fill fs-5"></i>
+            </div>
+            <div>
+              <h5 class="modal-title font-fredoka fw-bold mb-0" id="adminUserTicketsModalLabel">Tickets de Compra del Usuario</h5>
+              <small class="text-white-50" id="adminUserTicketsModalSubtitle">Historial de compras</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4" style="min-height: 250px; max-height: 550px; overflow-y: auto;">
+          <div id="adminUserTicketsContainer">
+            <div class="text-center py-5">
+              <div class="spinner-border text-purple" role="status" style="color:#7C3AED;"></div>
+              <p class="text-muted mt-2 small">Cargando tickets...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 bg-light py-3 px-4 rounded-bottom-4">
+          <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function openAdminUserTickets(userId, userName, userEmail) {
+      const modalEl = document.getElementById('adminUserTicketsModal');
+      const titleEl = document.getElementById('adminUserTicketsModalLabel');
+      const subEl = document.getElementById('adminUserTicketsModalSubtitle');
+      const container = document.getElementById('adminUserTicketsContainer');
+
+      if (titleEl) titleEl.textContent = `Tickets de Compra de ${userName}`;
+      if (subEl) subEl.textContent = `Correo: ${userEmail || '—'} | ID Usuario: #${userId}`;
+      if (container) {
+        container.innerHTML = `
+          <div class="text-center py-5">
+            <div class="spinner-border text-purple" role="status" style="color:#7C3AED;"></div>
+            <p class="text-muted mt-2 small">Cargando tickets de ${userName}...</p>
+          </div>`;
+      }
+
+      const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      bsModal.show();
+
+      try {
+        const resp = await fetch(`include/obtener_pedidos_admin.php?id_usuario=${userId}`);
+        const data = await resp.json();
+
+        if (!data.success || !data.pedidos || data.pedidos.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <div class="display-3 mb-2">🧾</div>
+              <h5 class="fw-bold text-dark mb-1">Sin tickets registrados</h5>
+              <p class="text-muted small">Este usuario aún no ha realizado ninguna compra.</p>
+            </div>`;
+          return;
+        }
+
+        renderTicketsList(data.pedidos, container, true);
+      } catch (e) {
+        console.error('Error al cargar tickets:', e);
+        container.innerHTML = `<div class="alert alert-danger">Error al conectar con el servidor.</div>`;
+      }
+    }
+
+    async function loadAdminAllTickets() {
+      const container = document.getElementById('adminAllTicketsContainer');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <div class="spinner-border text-purple" role="status" style="color:#7C3AED;"></div>
+          <p class="text-muted mt-2 small">Cargando lista global de tickets...</p>
+        </div>`;
+
+      try {
+        const resp = await fetch('include/obtener_pedidos_admin.php');
+        const data = await resp.json();
+
+        if (!data.success || !data.pedidos || data.pedidos.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <div class="display-3 mb-2">🧾</div>
+              <h5 class="fw-bold text-dark mb-1">No hay tickets registrados en el sistema</h5>
+              <p class="text-muted small">Los tickets aparecerán aquí cuando los clientes realicen compras.</p>
+            </div>`;
+          return;
+        }
+
+        renderTicketsList(data.pedidos, container, false);
+      } catch (e) {
+        console.error('Error al cargar todos los tickets:', e);
+        container.innerHTML = `<div class="alert alert-danger">Error al cargar tickets globales.</div>`;
+      }
+    }
+
+    function renderTicketsList(pedidos, container, isSingleUser = false) {
+      let html = `<div class="d-flex flex-column gap-3">`;
+
+      pedidos.forEach(order => {
+        let statusClass = 'bg-success';
+        if (order.estado === 'Pendiente') statusClass = 'bg-warning text-dark';
+        if (order.estado === 'Cancelado') statusClass = 'bg-danger';
+
+        let itemsHtml = order.items.map(item => `
+          <div class="d-flex align-items-center gap-2 py-1">
+            <img src="${item.imagen}" alt="${item.nombre}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;" onError="this.src='Juguetes/default.png'">
+            <div class="flex-grow-1">
+              <span class="fw-semibold text-dark small">${item.nombre}</span>
+              <small class="text-muted d-block" style="font-size:0.75rem;">x${item.cantidad} — $${item.precio_unitario.toFixed(2)} c/u</small>
+            </div>
+            <strong class="small text-dark">$${item.subtotal.toFixed(2)}</strong>
+          </div>
+        `).join('');
+
+        html += `
+          <div class="card border rounded-4 shadow-sm" id="adminOrderCard-${order.id_pedido}">
+            <div class="card-header bg-white py-3 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 border-bottom">
+              <div class="d-flex align-items-center gap-3">
+                <span class="badge px-3 py-2 fs-6 fw-bold" style="background:#7C3AED; color:#fff;">${order.folio}</span>
+                <div>
+                  <small class="text-muted d-block" style="font-size:0.78rem;"><i class="bi bi-calendar3 me-1"></i>${order.fecha}</small>
+                  ${!isSingleUser ? `<strong class="text-dark small"><i class="bi bi-person me-1"></i>${order.cliente_nombre} (${order.cliente_correo})</strong>` : ''}
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="badge ${statusClass} px-3 py-1.5 rounded-pill" id="orderStatusBadge-${order.id_pedido}">${order.estado}</span>
+                <span class="badge bg-light text-dark border px-3 py-1.5 rounded-pill"><i class="bi bi-credit-card me-1"></i>${order.metodo_pago}</span>
+                <strong class="fs-5 ms-2" style="color:#7C3AED;">$${order.total.toFixed(2)}</strong>
+              </div>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-3">
+                <div class="col-lg-7">
+                  <h6 class="fw-bold text-dark mb-2 small"><i class="bi bi-bag-check me-1"></i> Detalle del Pedido</h6>
+                  <div class="p-3 bg-light rounded-3 border" style="max-height:180px; overflow-y:auto;">
+                    ${itemsHtml}
+                  </div>
+                </div>
+
+                <div class="col-lg-5 d-flex flex-column justify-content-between">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2 small"><i class="bi bi-gear me-1"></i> Gestión de Estado</h6>
+                    <div class="input-group input-group-sm mb-3">
+                      <label class="input-group-text bg-white small">Estado</label>
+                      <select class="form-select form-select-sm" id="selectStatus-${order.id_pedido}">
+                        <option value="Completado" ${order.estado === 'Completado' ? 'selected' : ''}>Completado</option>
+                        <option value="Pendiente" ${order.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                        <option value="Cancelado" ${order.estado === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                      </select>
+                      <button class="btn text-white btn-sm" style="background:#7C3AED;" onclick="updateOrderStatusAdmin(${order.id_pedido})">
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-2 pt-2 border-top">
+                    <button type="button" class="btn btn-sm btn-outline-purple flex-grow-1" style="border-color:#7C3AED; color:#7C3AED;" onclick="if(window.viewOrderTicket) window.viewOrderTicket(${order.id_pedido});">
+                      <i class="bi bi-printer-fill me-1"></i> Ver / Imprimir Ticket
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteOrderAdmin(${order.id_pedido})" title="Eliminar Ticket">
+                      <i class="bi bi-trash3-fill"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    async function updateOrderStatusAdmin(orderId) {
+      const select = document.getElementById(`selectStatus-${orderId}`);
+      if (!select) return;
+
+      const newStatus = select.value;
+      try {
+        const resp = await fetch('include/actualizar_estado_pedido.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: orderId, estado: newStatus })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          const badge = document.getElementById(`orderStatusBadge-${orderId}`);
+          if (badge) {
+            badge.textContent = newStatus;
+            badge.className = 'badge px-3 py-1.5 rounded-pill ' + 
+              (newStatus === 'Completado' ? 'bg-success' : (newStatus === 'Pendiente' ? 'bg-warning text-dark' : 'bg-danger'));
+          }
+          alert(`✅ ${data.message}`);
+        } else {
+          alert(`⚠️ ${data.message}`);
+        }
+      } catch (e) {
+        console.error('Error al actualizar estado:', e);
+        alert('⚠️ Error al comunicarse con el servidor.');
+      }
+    }
+
+    async function deleteOrderAdmin(orderId) {
+      if (!confirm(`¿Estás seguro de que deseas eliminar el ticket #${orderId}? Esta acción no se puede deshacer.`)) {
+        return;
+      }
+
+      try {
+        const resp = await fetch('include/eliminar_pedido.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: orderId })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          const card = document.getElementById(`adminOrderCard-${orderId}`);
+          if (card) card.remove();
+          alert(`✅ ${data.message}`);
+        } else {
+          alert(`⚠️ ${data.message}`);
+        }
+      } catch (e) {
+        console.error('Error al eliminar ticket:', e);
+        alert('⚠️ Error de conexión.');
+      }
+    }
   </script>
 </body>
 </html>

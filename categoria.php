@@ -448,7 +448,11 @@ if ($sort === 'precio_asc') {
                 data-views='<?= htmlspecialchars(json_encode($producto['vistas'], JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8') ?>'
                 role="button" tabindex="0">
                 <div class="product-image">
-                  <span class="product-badge new">Nuevo</span>
+                  <?php if ((int)$producto['stock'] <= 0): ?>
+                    <span class="product-badge out-of-stock" style="background:#EF4444; color:#ffffff; font-weight:800; z-index:5;">Sin Stock</span>
+                  <?php else: ?>
+                    <span class="product-badge new">Nuevo</span>
+                  <?php endif; ?>
                   <button class="product-wishlist" aria-label="Agregar a favoritos"><i class="bi bi-heart"></i></button>
                   <img
                     src="<?= htmlspecialchars($producto['vistas']['frente'] ?? 'Juguetes/default.png', ENT_QUOTES, 'UTF-8') ?>"
@@ -463,7 +467,11 @@ if ($sort === 'precio_asc') {
                   <h3><?= htmlspecialchars($producto['nombre']) ?></h3>
                   <div class="product-footer mt-auto">
                     <span class="product-price">$<?= number_format($producto['precio'], 0, ',', '.') ?></span>
-                    <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+                    <?php if ((int)$producto['stock'] <= 0): ?>
+                      <button class="btn-add-cart disabled" style="background:#6B7280; opacity:0.6; cursor:not-allowed;" title="Producto sin stock" disabled><i class="bi bi-slash-circle"></i></button>
+                    <?php else: ?>
+                      <button class="btn-add-cart" aria-label="Agregar al carrito"><i class="bi bi-plus"></i></button>
+                    <?php endif; ?>
                   </div>
                 </div>
               </div>

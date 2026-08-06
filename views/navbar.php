@@ -25,6 +25,7 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
 ?>
 <script>
   window.isUserLoggedIn = <?= isset($_SESSION['usuario_id']) ? 'true' : 'false' ?>;
+  window.currentUserId = <?= isset($_SESSION['usuario_id']) ? (int)$_SESSION['usuario_id'] : 0 ?>;
 </script>
 <!-- ── NAVBAR ── -->
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
@@ -51,9 +52,15 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
         <li class="nav-item">
           <a class="nav-link" href="categoria.php?c=todos" id="nav-categorias">Categorías</a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="categoria.php?c=todos" id="nav-ofertas">Ofertas</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#categorias" id="nav-nosotros">Nosotros</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php#productos" id="nav-contacto">Contacto</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php#ofertas" id="nav-ofertas"><span class="badge bg-danger text-white me-1" style="font-size:0.65rem; vertical-align:middle;">HOT</span> Ofertas</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php#nosotros" id="nav-nosotros"
+            onclick="if(!window.location.pathname.endsWith('index.php') && window.location.pathname !== '/' && !window.location.pathname.endsWith('Tienda-de-juguetes/')) { event.preventDefault(); if(window.closeAllModals) window.closeAllModals(); setTimeout(() => { const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('nosotrosModal')); modal.show(); }, 150); }">Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="index.php#contacto" id="nav-contacto"
+            onclick="if(!window.location.pathname.endsWith('index.php') && window.location.pathname !== '/' && !window.location.pathname.endsWith('Tienda-de-juguetes/')) { event.preventDefault(); if(window.closeAllModals) window.closeAllModals(); setTimeout(() => { const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('contactoModal')); modal.show(); }, 150); }">Contacto</a>
+        </li>
         <?php 
         $userRolNavbar = strtolower($_SESSION['usuario_rol'] ?? '');
         if (isset($_SESSION['usuario_id']) && in_array($userRolNavbar, ['administrador', 'editor'])): 
@@ -73,15 +80,13 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
 
         <?php if (isset($_SESSION['usuario_id'])): ?>
           <!-- Logged in user dropdown -->
-          <div class="dropdown">
+          <div class="dropdown user-dropdown-hover">
             <button class="nav-icon-btn dropdown-toggle d-flex align-items-center gap-2" id="userDropdown"
               data-bs-toggle="dropdown" aria-expanded="false"
               style="border: none; background: transparent; padding: 0.25rem 0.75rem; border-radius: 50px; background-color: rgba(124, 58, 237, 0.08); color: #7C3AED; transition: all 0.2s ease;">
               <i class="bi bi-person-fill fs-5"></i>
               <span class="d-none d-md-inline fw-semibold" style="font-size: 0.9rem;">
-                <a href="#" class="text-decoration-none text-dark"
-                  onclick="event.preventDefault(); event.stopPropagation(); const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('profileModal')); modal.show();"
-                  style="color: inherit;">
+                <span class="text-decoration-none text-dark" style="color: inherit;">
                   <?php
                   if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'cliente') {
                     echo "Bienvenido " . htmlspecialchars($_SESSION['usuario_nombre'] ?? '');
@@ -89,11 +94,11 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
                     echo htmlspecialchars($_SESSION['usuario_nombre'] ?? '') . " (" . htmlspecialchars($_SESSION['usuario_rol'] ?? '') . ")";
                   }
                   ?>
-                </a>
+                </span>
               </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" aria-labelledby="userDropdown"
-              style="border-radius: 12px; min-width: 200px; background-color: #fff; z-index: 1050;">
+              style="border-radius: 12px; min-width: 220px; background-color: #fff; z-index: 1050;">
               <li class="px-3 py-2 border-bottom mb-2">
                 <p class="mb-0 fw-bold text-dark text-capitalize" style="font-size: 0.9rem;">
                   <?php echo htmlspecialchars(($_SESSION['usuario_nombre'] ?? '') . ' ' . ($_SESSION['usuario_apellido'] ?? '')); ?>
@@ -105,16 +110,22 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
                   style="font-size: 0.65rem; background-color: var(--purple); color: #fff;"><?php echo htmlspecialchars($_SESSION['usuario_rol'] ?? ''); ?></span>
               </li>
               <li>
-                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" href="#" data-bs-toggle="modal"
-                  data-bs-target="#profileModal"
-                  onclick="event.preventDefault(); event.stopPropagation(); const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('profileModal')); modal.show();"
+                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" href="#"
+                  onclick="event.preventDefault(); if(window.closeAllModals) window.closeAllModals(); setTimeout(() => { const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('profileModal')); modal.show(); }, 150);"
                   style="font-size: 0.9rem;">
                   <i class="bi bi-person-gear"></i> Editar perfil
                 </a>
               </li>
               <li>
+                <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2" href="#"
+                  onclick="event.preventDefault(); if(window.loadUserOrders) window.loadUserOrders();"
+                  style="font-size: 0.9rem;">
+                  <i class="bi bi-bag-check-fill text-purple"></i> Mis Pedidos
+                </a>
+              </li>
+              <li>
                 <a class="dropdown-item rounded d-flex align-items-center gap-2 py-2 text-danger fw-semibold"
-                  href="include/logout.php" style="font-size: 0.9rem;">
+                  href="include/logout.php" onclick="logoutNow(); return false;" style="font-size: 0.9rem;">
                   <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
               </li>
@@ -128,6 +139,7 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
 
         <?php if (isset($_SESSION['usuario_id'])): ?>
           <a class="nav-link d-flex align-items-center gap-2 text-danger fw-semibold" href="include/logout.php"
+            onclick="logoutNow(); return false;"
             style="font-size: 0.9rem; padding: 0.4rem 0.7rem; border-radius: 999px; background-color: rgba(220, 53, 69, 0.08);">
             <i class="bi bi-box-arrow-right"></i>
             <span class="d-none d-lg-inline">Cerrar sesión</span>
@@ -441,6 +453,402 @@ if ($isIndexPage && isset($_SESSION['mostrar_bienvenida_reactivacion']) && $_SES
     </div>
   </div>
 <?php endif; ?>
+
+<!-- ── MODAL SELECCIÓN MÉTODO DE PAGO ── -->
+<div class="modal fade" id="checkoutPaymentModal" tabindex="-1" aria-labelledby="checkoutPaymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      <div class="modal-header border-0 bg-light-purple py-3 px-4" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+            <i class="bi bi-credit-card-fill"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-fredoka fw-bold mb-0" id="checkoutPaymentModalLabel" style="color: #7C3AED;">Finalizar Compra</h5>
+            <small class="text-muted">Selecciona tu método de pago para generar tu ticket</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="row g-4">
+          <!-- Sidebar con Resumen -->
+          <div class="col-md-5 order-md-2">
+            <div class="p-3 bg-light rounded-4 border">
+              <h6 class="fw-bold mb-3 d-flex align-items-center gap-2 text-purple">
+                <i class="bi bi-receipt"></i> Resumen de Compra
+              </h6>
+              <div id="checkoutItemsPreview" class="mb-3" style="max-height: 180px; overflow-y: auto; font-size: 0.85rem;"></div>
+              <hr>
+              <div class="d-flex justify-content-between small mb-1">
+                <span>Subtotal:</span>
+                <span id="checkoutSubtotalDisplay">$0.00</span>
+              </div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span>Envío:</span>
+                <span id="checkoutShippingDisplay">$80.00</span>
+              </div>
+              <div class="d-flex justify-content-between small mb-2 text-success" id="checkoutDiscountRow" style="display:none;">
+                <span>Descuento:</span>
+                <span id="checkoutDiscountDisplay">-$0.00</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between fw-bold fs-5 text-dark">
+                <span>Total:</span>
+                <span id="checkoutTotalDisplay" style="color: #7C3AED;">$0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opciones de Pago -->
+          <div class="col-md-7 order-md-1">
+            <h6 class="fw-bold mb-3">Método de Pago <span class="text-danger">*</span></h6>
+            
+            <div class="payment-methods-grid d-flex gap-3 mb-4">
+              <!-- Efectivo Option -->
+              <label class="payment-method-card flex-fill p-3 border rounded-3 text-center cursor-pointer active" id="payMethodEfectivoLabel" style="cursor:pointer; transition: all 0.2s ease;">
+                <input type="radio" name="paymentMethod" value="efectivo" checked class="d-none" id="payMethodEfectivo">
+                <div class="fs-2 mb-1">💵</div>
+                <div class="fw-bold">Efectivo</div>
+                <small class="text-muted d-block" style="font-size:0.75rem;">Pago al recibir / Sucursal</small>
+              </label>
+
+              <!-- Tarjeta Option -->
+              <label class="payment-method-card flex-fill p-3 border rounded-3 text-center cursor-pointer" id="payMethodTarjetaLabel" style="cursor:pointer; transition: all 0.2s ease;">
+                <input type="radio" name="paymentMethod" value="tarjeta" class="d-none" id="payMethodTarjeta">
+                <div class="fs-2 mb-1">💳</div>
+                <div class="fw-bold">Tarjeta</div>
+                <small class="text-muted d-block" style="font-size:0.75rem;">Crédito o Débito</small>
+              </label>
+            </div>
+
+            <!-- Efectivo Details -->
+            <div id="cashFields" class="payment-details-box p-3 bg-light rounded-3 border mb-3">
+              <h6 class="fw-bold text-dark mb-2" style="font-size:0.9rem;"><i class="bi bi-cash-stack text-success me-1"></i> Pago en Efectivo</h6>
+              <div class="mb-2">
+                <label for="cashAmountInput" class="form-label small fw-semibold mb-1">¿Con cuánto vas a pagar?</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">$</span>
+                  <input type="number" id="cashAmountInput" class="form-control" placeholder="Ingresa el monto" step="0.50" min="0">
+                </div>
+              </div>
+              <div id="changeCalculatorAlert" class="alert alert-info py-2 px-3 mb-0 small" style="display:none; font-size:0.85rem;">
+                <i class="bi bi-info-circle-fill me-1"></i> Cambio estimado: <strong id="cashChangeDisplay">$0.00</strong>
+              </div>
+            </div>
+
+            <!-- Tarjeta Details -->
+            <div id="cardFields" class="payment-details-box p-3 bg-light rounded-3 border mb-3" style="display:none;">
+              <h6 class="fw-bold text-dark mb-3" style="font-size:0.9rem;"><i class="bi bi-credit-card-2-front-fill text-purple me-1"></i> Datos de la Tarjeta</h6>
+              <div class="mb-2">
+                <label for="cardHolder" class="form-label small mb-1">Nombre del titular</label>
+                <input type="text" id="cardHolder" class="form-control form-control-sm" placeholder="Ej. Alex Gonzalez">
+              </div>
+              <div class="mb-2">
+                <label for="cardNumber" class="form-label small mb-1">Número de tarjeta</label>
+                <div class="input-group input-group-sm">
+                  <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                  <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                </div>
+              </div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label for="cardExpiry" class="form-label small mb-1">Vencimiento</label>
+                  <input type="text" id="cardExpiry" class="form-control form-control-sm" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="col-6">
+                  <label for="cardCvv" class="form-label small mb-1">CVV</label>
+                  <input type="password" id="cardCvv" class="form-control form-control-sm" placeholder="123" maxlength="4">
+                </div>
+              </div>
+            </div>
+
+            <div id="checkoutErrorAlert" class="alert alert-danger py-2 px-3 small mb-3" style="display:none;"></div>
+
+            <button type="button" class="btn-primary-custom w-100 py-3 font-fredoka fw-bold text-white d-flex align-items-center justify-content-center gap-2" id="btnConfirmCheckoutOrder">
+              <i class="bi bi-check-circle-fill fs-5"></i> Confirmar Compra y Generar Ticket
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL TICKET DE COMPRA ── -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+      <div class="modal-header border-0 bg-dark text-white py-3 px-4 d-print-none">
+        <h5 class="modal-title font-fredoka fw-bold text-white mb-0" id="ticketModalLabel">
+          <i class="bi bi-receipt me-2 text-warning"></i> Ticket de Compra
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4 bg-light">
+        
+        <!-- Recibo imprimible -->
+        <div class="ticket-receipt-card bg-white p-4 rounded-4 shadow-sm border position-relative" id="printableTicketArea">
+          <!-- Cabecera Tienda -->
+          <div class="text-center mb-3 border-bottom pb-3">
+            <div class="fs-1 mb-1">🐻</div>
+            <h4 class="font-fredoka fw-bold mb-0 text-purple" style="letter-spacing:1px; color:#7C3AED;">TOYS NOVA</h4>
+            <p class="text-muted small mb-0">Tienda de Juguetes & Fantasías</p>
+            <small class="text-secondary d-block" style="font-size:0.75rem;">RFC: TNO-2026-8899X • Tel: (55) 7737-4656</small>
+          </div>
+
+          <!-- Folio y Fecha -->
+          <div class="d-flex justify-content-between align-items-center small mb-2 bg-light p-2 rounded border">
+            <div>
+              <span class="text-muted d-block" style="font-size:0.7rem;">FOLIO DE COMPRA:</span>
+              <strong id="ticketFolio" class="font-monospace text-purple fs-6" style="color:#7C3AED;">TN-000000</strong>
+            </div>
+            <div class="text-end">
+              <span class="text-muted d-block" style="font-size:0.7rem;">FECHA & HORA:</span>
+              <strong id="ticketFecha" class="small text-dark">00/00/0000 00:00</strong>
+            </div>
+          </div>
+
+          <!-- Datos Cliente -->
+          <div class="mb-3 p-2 border rounded small bg-light">
+            <div style="font-size:0.75rem;" class="text-muted">CLIENTE:</div>
+            <strong id="ticketClienteNombre" class="text-dark d-block">--</strong>
+            <small id="ticketClienteCorreo" class="text-muted d-block">--</small>
+          </div>
+
+          <!-- Lista de Productos -->
+          <div class="table-responsive mb-3">
+            <table class="table table-sm align-middle small mb-0">
+              <thead class="table-light">
+                <tr style="font-size:0.75rem;">
+                  <th>Cant.</th>
+                  <th>Producto</th>
+                  <th class="text-end">P.Unit</th>
+                  <th class="text-end">Importe</th>
+                </tr>
+              </thead>
+              <tbody id="ticketItemsBody" style="font-size:0.82rem;">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Desglose de Totales -->
+          <div class="border-top pt-2 mb-3">
+            <div class="d-flex justify-content-between small mb-1">
+              <span>Subtotal:</span>
+              <span id="ticketSubtotal">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+              <span>Envío:</span>
+              <span id="ticketEnvio">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-1 text-success" id="ticketDiscountRow" style="display:none;">
+              <span>Descuento:</span>
+              <span id="ticketDescuento">-$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between fw-bold fs-5 text-dark border-top pt-2 mt-1">
+              <span>TOTAL PAGADO:</span>
+              <strong id="ticketTotal" style="color:#7C3AED;">$0.00</strong>
+            </div>
+          </div>
+
+          <!-- Info Método de Pago -->
+          <div class="p-2 border rounded text-center small mb-3 bg-light">
+            <span class="text-muted" style="font-size:0.75rem;">MÉTODO DE PAGO:</span>
+            <strong id="ticketMetodoPago" class="d-block text-uppercase text-dark">EFECTIVO</strong>
+            <div id="ticketCashDetails" style="display:none;" class="mt-1 small text-muted">
+              Monto recibido: <span id="ticketCashPaid">$0.00</span> | Cambio: <span id="ticketCashChange">$0.00</span>
+            </div>
+          </div>
+
+          <!-- Pie del ticket -->
+          <div class="text-center text-muted border-top pt-3" style="font-size:0.72rem;">
+            <p class="mb-1 fw-bold">¡GRACIAS POR TU COMPRA! 🎉</p>
+            <p class="mb-0">Conserva este ticket digital para cualquier aclaración o garantía.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer border-0 bg-light d-flex justify-content-between d-print-none py-3 px-4">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i> Cerrar
+        </button>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary-custom btn-sm text-white fw-bold px-3" onclick="window.printTicket()">
+            <i class="bi bi-printer-fill me-1"></i> Imprimir Ticket
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL MIS PEDIDOS ── -->
+<div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      <div class="modal-header border-0 bg-light-purple py-3 px-4" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+            <i class="bi bi-bag-check-fill"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-fredoka fw-bold mb-0" id="ordersModalLabel" style="color: #7C3AED;">Mis Pedidos</h5>
+            <small class="text-muted">Historial de compras realizadas en tu carrito</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4" style="min-height: 250px; max-height: 500px; overflow-y: auto;">
+        <div id="userOrdersContainer">
+          <div class="text-center py-5">
+            <div class="spinner-border text-purple" role="status"></div>
+            <p class="text-muted mt-2 small">Cargando tus pedidos...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL NOSOTROS (SOBRE LA EMPRESA) ── -->
+<div class="modal fade" id="nosotrosModal" tabindex="-1" aria-labelledby="nosotrosModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      <div class="modal-header border-0 bg-light-purple py-3 px-4" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+            <i class="bi bi-info-circle-fill"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-fredoka fw-bold mb-0" id="nosotrosModalLabel" style="color: #7C3AED;">Sobre TOYS NOVA</h5>
+            <small class="text-muted">Conoce nuestra historia, misión y valores</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="text-center mb-4">
+          <div class="display-3 mb-2">🐻✨</div>
+          <h4 class="font-fredoka fw-bold text-dark">¡Hola! Somos TOYS NOVA</h4>
+          <p class="text-muted small mx-auto" style="max-width:550px;">
+            Tu tienda de confianza especializada en juguetes interactivos, peluches, didácticos y de entretenimiento para todas las edades.
+          </p>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded-4 text-center border h-100">
+              <div class="fs-2 text-purple mb-2">🎯</div>
+              <h6 class="fw-bold text-dark">Nuestra Misión</h6>
+              <p class="text-muted small mb-0">Fomentar el desarrollo infantil mediante juguetes educativos y seguros que inspiran curiosidad y alegría.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded-4 text-center border h-100">
+              <div class="fs-2 text-pink mb-2">🌟</div>
+              <h6 class="fw-bold text-dark">Nuestra Visión</h6>
+              <p class="text-muted small mb-0">Ser la tienda de juguetes líder en el país, reconocida por nuestra calidad, atención rápida y variedad.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-light rounded-4 text-center border h-100">
+              <div class="fs-2 text-warning mb-2">💡</div>
+              <h6 class="fw-bold text-dark">Nuestros Valores</h6>
+              <p class="text-muted small mb-0">Seguridad ante todo, innovación continua, compromiso con la infancia y excelencia en servicio.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-4 border bg-purple-subtle d-flex align-items-center gap-3" style="background:rgba(124,58,237,0.06);">
+          <div class="fs-2 text-purple" style="color:#7C3AED;"><i class="bi bi-shop"></i></div>
+          <div>
+            <strong class="d-block text-dark small">¿Tienes preguntas o deseas hacernos un pedido corporativo?</strong>
+            <small class="text-muted">Escríbenos a <strong>hola@toysnova.com</strong> o llámanos al <strong>(55) 5555-5555</strong>.</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-light py-3 px-4">
+        <button type="button" class="btn btn-purple text-white font-fredoka fw-bold px-4" style="background:#7C3AED; border-radius:12px;" data-bs-dismiss="modal">
+          ¡Entendido!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CONTACTO (CONTACTO RÁPIDO) ── -->
+<div class="modal fade" id="contactoModal" tabindex="-1" aria-labelledby="contactoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      <div class="modal-header border-0 bg-light-purple py-3 px-4" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+        <div class="d-flex align-items-center gap-2">
+          <div style="width:40px;height:40px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+            <i class="bi bi-headset"></i>
+          </div>
+          <div>
+            <h5 class="modal-title font-fredoka fw-bold mb-0" id="contactoModalLabel" style="color: #7C3AED;">Contacto & Atención al Cliente</h5>
+            <small class="text-muted">Estamos aquí para resolver tus dudas</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="p-3 bg-light rounded-4 border h-100">
+              <h6 class="fw-bold text-dark mb-3"><i class="bi bi-telephone-fill me-1" style="color:#7C3AED;"></i> Canales Directos</h6>
+              <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-3">
+                <li class="d-flex align-items-center gap-2">
+                  <i class="bi bi-whatsapp text-success fs-5"></i>
+                  <div>
+                    <strong class="d-block text-dark">WhatsApp Ventas</strong>
+                    <span>(55) 5555-5555</span>
+                  </div>
+                </li>
+                <li class="d-flex align-items-center gap-2">
+                  <i class="bi bi-envelope-fill fs-5" style="color:#7C3AED;"></i>
+                  <div>
+                    <strong class="d-block text-dark">Correo Electrónico</strong>
+                    <span>hola@toysnova.com</span>
+                  </div>
+                </li>
+                <li class="d-flex align-items-center gap-2">
+                  <i class="bi bi-clock-fill text-warning fs-5"></i>
+                  <div>
+                    <strong class="d-block text-dark">Horarios de Atención</strong>
+                    <span>Lun - Sáb: 9:00 AM - 8:00 PM</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <div id="modalContactFormAlert" class="alert mb-2" style="display:none; border-radius:10px;"></div>
+            <form id="modalContactForm">
+              <div class="mb-2">
+                <label class="form-label small fw-semibold mb-1">Nombre</label>
+                <input type="text" class="form-control form-control-sm" name="nombre" placeholder="Tu nombre" required>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small fw-semibold mb-1">Correo electrónico</label>
+                <input type="email" class="form-control form-control-sm" name="correo" placeholder="ejemplo@correo.com" required>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small fw-semibold mb-1">Mensaje</label>
+                <textarea class="form-control form-control-sm" name="mensaje" rows="3" placeholder="Escribe tu mensaje..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-purple w-100 text-white font-fredoka fw-bold mt-2" style="background:#7C3AED; border-radius:10px;">
+                <i class="bi bi-send me-1"></i> Enviar Mensaje
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {

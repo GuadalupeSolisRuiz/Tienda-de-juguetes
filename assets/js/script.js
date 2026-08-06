@@ -34,6 +34,12 @@ function toggleModalPw(id, btn) {
 // ── CONTROL DE INACTIVIDAD DE SESIÓN ──
 // Se dejó sin modal para evitar que aparezca de forma invasiva.
 function logoutNow() {
+  localStorage.removeItem('toyStoreCart');
+  localStorage.removeItem('toyStoreCartTs');
+  if (window.toyCart) {
+    window.toyCart.items = [];
+    window.toyCart.updateCount();
+  }
   window.location.href = 'include/logout.php';
 }
 
@@ -145,7 +151,28 @@ document.addEventListener('DOMContentLoaded', function () {
       modalTitle.textContent = card.dataset.name || 'Producto';
       modalDescription.textContent = card.dataset.description || '';
       modalPrice.textContent = card.dataset.formattedPrice || `$${card.dataset.price || '0'}`;
-      modalStock.textContent = `Stock disponible: ${card.dataset.stock || '0'}`;
+      const stockNum = parseInt(card.dataset.stock || '0', 10);
+      const modalBtnAddToCart = document.getElementById('modalBtnAddToCart');
+      if (stockNum <= 0) {
+        modalStock.className = 'product-modal-stock badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1 rounded-pill d-inline-flex align-items-center gap-1';
+        modalStock.style.fontSize = '0.78rem';
+        modalStock.innerHTML = `<i class="bi bi-x-circle-fill text-danger me-1"></i> Agotado (Sin Stock)`;
+        if (modalBtnAddToCart) {
+          modalBtnAddToCart.disabled = true;
+          modalBtnAddToCart.classList.add('disabled', 'opacity-50');
+          modalBtnAddToCart.innerHTML = `<i class="bi bi-slash-circle me-2"></i> Juguete Sin Stock`;
+        }
+      } else {
+        modalStock.className = 'product-modal-stock badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill d-inline-flex align-items-center gap-1';
+        modalStock.style.fontSize = '0.78rem';
+        modalStock.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> Stock: ${stockNum} dispon.`;
+        if (modalBtnAddToCart) {
+          modalBtnAddToCart.disabled = false;
+          modalBtnAddToCart.classList.remove('disabled', 'opacity-50');
+          modalBtnAddToCart.innerHTML = `<i class="bi bi-cart-plus-fill fs-5 me-2"></i> Agregar al Carrito`;
+        }
+      }
+
       const modalCategory = document.getElementById('modalProductCategory');
       if (modalCategory) modalCategory.textContent = card.dataset.categoria || '';
 
@@ -737,6 +764,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Ejecutar inmediatamente al cargar la página
     applyFilterAndSort();
+  }
+
+  // ── CONTACT FORMS SUBMISSION ──
+  const mainContactForm = document.getElementById('mainContactForm');
+  if (mainContactForm) {
+    mainContactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById('contactFormAlert');
+      if (alertBox) {
+        alertBox.className = 'alert alert-success mb-3';
+        alertBox.innerHTML = '✅ <strong>¡Mensaje enviado con éxito!</strong> Gracias por contactar a TOYS NOVA, te responderemos a la brevedad.';
+        alertBox.style.display = 'block';
+      }
+      mainContactForm.reset();
+    });
+  }
+
+  const modalContactForm = document.getElementById('modalContactForm');
+  if (modalContactForm) {
+    modalContactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById('modalContactFormAlert');
+      if (alertBox) {
+        alertBox.className = 'alert alert-success mb-2';
+        alertBox.innerHTML = '✅ <strong>¡Mensaje enviado!</strong> Nos pondremos en contacto contigo pronto.';
+        alertBox.style.display = 'block';
+      }
+      modalContactForm.reset();
+    });
   }
 
 });

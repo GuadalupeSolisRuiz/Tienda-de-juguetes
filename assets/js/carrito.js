@@ -251,10 +251,10 @@ const CartPage = {
 
   checkout() {
     if (window.toyCart.count() === 0) return;
-    if (confirm('¿Confirmas que deseas finalizar tu compra?')) {
-      window.toyCart.clear();
-      this.render();
-      this._showSuccess();
+    if (window.openCheckoutModal) {
+      window.openCheckoutModal(this.appliedCoupon);
+    } else {
+      alert('Iniciando proceso de pago...');
     }
   },
 
